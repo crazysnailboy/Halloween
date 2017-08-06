@@ -22,6 +22,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -146,7 +147,7 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 	}
 
 	@Override
-	protected SoundEvent getHurtSound()
+	protected SoundEvent getHurtSound(DamageSource source)
 	{
 		return ModSoundEvents.ENTITY_HALLOWITCH_HURT;
 	}
@@ -161,6 +162,11 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 	protected ResourceLocation getLootTable()
 	{
 		return ModLootTables.ENTITIES_HALLOWMOB;
+	}
+
+	@Override
+	public void setSwingingArms(boolean swingingArms)
+	{
 	}
 
 }

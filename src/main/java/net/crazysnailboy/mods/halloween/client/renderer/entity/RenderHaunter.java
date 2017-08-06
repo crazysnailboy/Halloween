@@ -51,7 +51,7 @@ public class RenderHaunter extends RenderLiving<EntityHaunter>
 //		System.out.println("preRenderCallback :: { cycleVisibility=" + entity.cycleVisibility + ", transparencyState=" + entity.transparencyState + " , opacity=" + entity.opacity + " }");
 
 		this.haunterModel.opacity = entity.getOpacity();
-		this.haunterModel.brightness = entity.getBrightness(1.0F);
+		this.haunterModel.brightness = entity.getBrightness();
 
 
 //		((ModelHaunter)this.mainModel).opacity = entity.opacity;

@@ -1,0 +1,19 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"group": "halloween:monster_detector",
+	"pattern": [
+		"MD", 
+		"DM"
+	],
+	"key": {
+		"M": {
+			"item": "halloween:haunt_malev"
+		},
+		"D": {
+			"item": "halloween:haunt_diabol"
+		}
+	},
+	"result": {
+		"item": "halloween:monster_detector"
+	}
+}

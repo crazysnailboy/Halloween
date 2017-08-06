@@ -161,7 +161,7 @@ public class EntityCreeperween extends EntityMob
 	}
 
 	@Override
-	protected SoundEvent getHurtSound()
+	protected SoundEvent getHurtSound(DamageSource source)
 	{
 		return SoundEvents.ENTITY_CREEPER_HURT;
 	}

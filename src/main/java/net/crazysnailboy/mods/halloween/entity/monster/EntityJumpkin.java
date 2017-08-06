@@ -140,7 +140,7 @@ public class EntityJumpkin extends EntitySlime
 			// if it's daytime, jumpkins have a chance to turn into pumpkins
 			if (this.world.isDaytime())
 			{
-				float brightness = this.getBrightness(1.0F);
+				float brightness = this.getBrightness();
 				if (brightness > 0.5F && this.world.canBlockSeeSky(this.getPosition()) && ((this.rand.nextFloat() * 30F) < ((brightness - 0.4F) * 2.0F)))
 				{
 					if (this.onGround || this.isInWater())

@@ -1,0 +1,29 @@
+{
+	"type": "minecraft:crafting_shapeless",
+	"group": "halloween:mega_candy",
+	"ingredients": [
+		{
+			"item": "halloween:candy",
+			"data": 0
+		},
+		{
+			"item": "halloween:candy",
+			"data": 1
+		},
+		{
+			"item": "halloween:candy",
+			"data": 2
+		},
+		{
+			"item": "halloween:candy",
+			"data": 3
+		},
+		{
+			"item": "halloween:candy",
+			"data": 4
+		}
+	],
+	"result": {
+		"item": "halloween:mega_candy"
+	}
+}

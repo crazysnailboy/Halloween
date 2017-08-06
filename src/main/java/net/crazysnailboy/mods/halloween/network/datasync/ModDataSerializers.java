@@ -37,6 +37,12 @@ public class ModDataSerializers
 		{
 			return new DataParameter(id, this);
 		}
+
+		@Override
+		public T copyValue(T value)
+		{
+			return value;
+		}
 	}
 
 

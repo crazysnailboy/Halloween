@@ -8,7 +8,6 @@ import net.crazysnailboy.mods.halloween.item.ItemCandy.EnumCandyFlavour;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -51,11 +50,14 @@ public class ItemCandy extends ItemFood implements IMultiItem<EnumCandyFlavour>
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems)
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems)
 	{
-		for (EnumCandyFlavour value : EnumCandyFlavour.values())
+		if (this.isInCreativeTab(tab))
 		{
-			subItems.add(new ItemStack(item, 1, value.getMetadata()));
+			for (EnumCandyFlavour value : EnumCandyFlavour.values())
+			{
+				subItems.add(new ItemStack(this, 1, value.getMetadata()));
+			}
 		}
 	}
 

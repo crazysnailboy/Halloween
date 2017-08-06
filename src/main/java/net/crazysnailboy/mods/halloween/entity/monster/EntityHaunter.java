@@ -87,7 +87,7 @@ public class EntityHaunter extends EntityMob
 	}
 
 	@Override
-	protected SoundEvent getHurtSound()
+	protected SoundEvent getHurtSound(DamageSource source)
 	{
 		return ModSoundEvents.ENTITY_HAUNTER_HURT;
 	}
@@ -100,13 +100,13 @@ public class EntityHaunter extends EntityMob
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getBrightnessForRender(float partialTicks)
+	public int getBrightnessForRender()
 	{
 		return 15728880;
 	}
 
 	@Override
-	public float getBrightness(float partialTicks)
+	public float getBrightness()
 	{
 		return 1.0F;
 	}

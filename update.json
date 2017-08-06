@@ -1,0 +1,30 @@
+{
+	"homepage": "https://github.com/crazysnailboy/Halloween/releases",
+	"promos": {
+		"1.12.1-latest": "0.1",
+		"1.12.1-recommended": "0.1",
+		"1.12-latest": "0.1",
+		"1.12-recommended": "0.1",
+		"1.11.2-latest": "0.1",
+		"1.11.2-recommended": "0.1",
+		"1.11-latest": "0.1",
+		"1.11-recommended": "0.1",
+		"1.10.2-latest": "0.1",
+		"1.10.2-recommended": "0.1"
+	},
+	"1.12.1": {
+		"0.1": "Initial alpha release"
+	},
+	"1.12": {
+		"0.1": "Initial alpha release"
+	},
+	"1.11.2": {
+		"0.1": "Initial alpha release"
+	},
+	"1.11": {
+		"0.1": "Initial alpha release"
+	},
+	"1.10.2": {
+		"0.1": "Initial alpha release"
+	}	
+}

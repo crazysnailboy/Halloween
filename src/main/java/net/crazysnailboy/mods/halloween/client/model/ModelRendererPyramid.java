@@ -5,9 +5,9 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.model.PositionTextureVertex;
 import net.minecraft.client.model.TexturedQuad;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -277,11 +277,11 @@ public class ModelRendererPyramid extends ModelRenderer
 	{
 		this.displayList = GLAllocation.generateDisplayLists(1);
 		GL11.glNewList(this.displayList, GL11.GL_COMPILE);
-		VertexBuffer vertexbuffer = Tessellator.getInstance().getBuffer();
+		BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
 
 		for (int i = 0; i < this.faces.length; i++)
 		{
-			this.faces[i].draw(vertexbuffer, scale);
+			this.faces[i].draw(bufferbuilder, scale);
 		}
 
 		GL11.glEndList();
