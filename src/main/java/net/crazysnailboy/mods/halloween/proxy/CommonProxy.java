@@ -11,7 +11,6 @@ public class CommonProxy
 	{
 		this.registerEntities();
 		this.registerLootTables();
-		this.registerNetworkMessages();
 	}
 
 	public void init()
@@ -38,11 +37,6 @@ public class CommonProxy
 	private void registerLootTables()
 	{
 		ModLootTables.registerLootTables();
-	}
-
-	private void registerNetworkMessages()
-	{
-//		HalloweenMod.NETWORK.registerMessage(HaunterVisibilityMessage.MessageHandler.class, HaunterVisibilityMessage.class, 0, Side.CLIENT);
 	}
 
 }
