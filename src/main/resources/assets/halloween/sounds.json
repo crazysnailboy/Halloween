@@ -1,0 +1,118 @@
+{
+	"ambient.halloween": {
+		"category": "ambient",
+		"subtitle": "subtitles.halloween.ambient.halloween",
+		"sounds": [{
+			"name": "halloween:ambient/halloween",
+			"stream": true
+		}]
+	},
+	"ambient.ooo": {
+		"category": "ambient",
+		"subtitle": "subtitles.halloween.ambient.ooo",
+		"sounds": [{
+			"name": "halloween:ambient/ooo",
+			"stream": true
+		}]
+	},
+	"ambient.spooky": {
+		"category": "ambient",
+		"subtitle": "subtitles.halloween.ambient.spooky",
+		"sounds": [{
+			"name": "halloween:ambient/spooky",
+			"stream": true
+		}]
+	},
+	
+	"entity.fake.fade": {
+		"category": "hostile",
+		"subtitle": "subtitles.entity.fake.fade",
+		"sounds": [{
+			"name": "halloween:entity/fake/fakefade",
+			"stream": true
+		}]
+	},
+	
+	"entity.hallowitch.ambient": {
+		"category": "hostile",
+		"subtitle": "subtitles.entity.hallowitch.ambient",
+		"sounds": [{
+			"name": "halloween:entity/witch/ambient1",
+			"stream": true
+		},{
+			"name": "halloween:entity/witch/ambient2",
+			"stream": true
+		},{
+			"name": "halloween:entity/witch/ambient3",
+			"stream": true
+		}]
+	},
+	"entity.hallowitch.death": {
+		"category": "hostile",
+		"subtitle": "subtitles.entity.hallowitch.death",
+		"sounds": [{
+			"name": "halloween:entity/witch/death1",
+			"stream": true
+		},{
+			"name": "halloween:entity/witch/death2",
+			"stream": true
+		}]
+	},
+	"entity.hallowitch.hurt": {
+		"category": "hostile",
+		"subtitle": "subtitles.entity.hallowitch.hurt",
+		"sounds": [{
+			"name": "halloween:entity/witch/hurt1",
+			"stream": true
+		},{
+			"name": "halloween:entity/witch/hurt2",
+			"stream": true
+		}]
+	},
+	
+	"entity.haunter.appear": {
+		"category": "hostile",
+		"subtitle": "subtitles.entity.haunter.appear",
+		"sounds": [{
+			"name": "halloween:entity/haunter/appear",
+			"stream": true
+		}]
+	},
+	"entity.haunter.death": {
+		"category": "hostile",
+		"subtitle": "subtitles.entity.haunter.death",
+		"sounds": [{
+			"name": "halloween:entity/haunter/death1",
+			"stream": true
+		}]
+	},
+	"entity.haunter.hurt": {
+		"category": "hostile",
+		"subtitle": "subtitles.entity.haunter.hurt",
+		"sounds": [{
+			"name": "halloween:entity/haunter/hurt1",
+			"stream": true
+		},{
+			"name": "halloween:entity/haunter/hurt2",
+			"stream": true
+		}]
+	},
+	
+	"item.monster_detector.detecthi": {
+		"category": "hostile",
+		"subtitle": "subtitles.item.monster_detector.detecthi",
+		"sounds": [{
+			"name": "halloween:item/monster_detector/detecthi",
+			"stream": true
+		}]
+	},
+	"item.monster_detector.detectlo": {
+		"category": "hostile",
+		"subtitle": "subtitles.item.monster_detector.detectlo",
+		"sounds": [{
+			"name": "halloween:item/monster_detector/detectlo",
+			"stream": true
+		}]
+	}
+	
+}

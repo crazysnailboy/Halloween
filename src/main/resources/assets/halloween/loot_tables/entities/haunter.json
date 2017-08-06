@@ -1,0 +1,18 @@
+{
+	"pools": [{
+		"name": "halloween:haunter",
+		"rolls": 1,
+		"conditions": [{
+			"condition": "killed_by_player"
+		}],
+		"entries": [{
+			"type": "item",
+			"name": "halloween:haunt_malev",
+			"weight": 1
+		},{
+			"type": "item",
+			"name": "halloween:haunt_diabol",
+			"weight": 1
+		}]
+	}]
+}

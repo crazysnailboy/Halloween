@@ -1,0 +1,51 @@
+package net.crazysnailboy.mods.halloween.network.datasync;
+
+import java.io.IOException;
+import net.crazysnailboy.mods.halloween.entity.monster.EntityHaunter.EnumTransparencyState;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializer;
+import net.minecraft.network.datasync.DataSerializers;
+
+
+public class ModDataSerializers
+{
+
+	public static class EnumDataSerializer<T extends Enum> implements DataSerializer<T>
+	{
+		private final Class<T> enumClass;
+
+		public EnumDataSerializer(Class<T> enumClass)
+		{
+			this.enumClass = enumClass;
+		}
+
+		@Override
+		public void write(PacketBuffer buf, T value)
+		{
+			buf.writeEnumValue(value);
+		}
+
+		@Override
+		public T read(PacketBuffer buf) throws IOException
+		{
+			return (T)buf.readEnumValue(enumClass);
+		}
+
+		@Override
+		public DataParameter<T> createKey(int id)
+		{
+			return new DataParameter(id, this);
+		}
+	}
+
+
+	public static final DataSerializer<EnumTransparencyState> HAUNTER_TRANSPARENCY = new EnumDataSerializer<EnumTransparencyState>(EnumTransparencyState.class);
+
+
+	static
+	{
+		DataSerializers.registerSerializer(HAUNTER_TRANSPARENCY);
+	}
+
+}
