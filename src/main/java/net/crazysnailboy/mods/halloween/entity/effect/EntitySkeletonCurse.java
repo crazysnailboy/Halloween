@@ -43,7 +43,7 @@ public class EntitySkeletonCurse extends EntityCurse
 //				this.victim.field_9346_af = health;
 //				this.victim.prevHealth = this.victim.health;
 //				this.victim.heartsLife = this.victim.heartsHalvesLife;
-				this.victim.attackEntityFrom(DamageSource.generic, health);
+				this.victim.attackEntityFrom(DamageSource.GENERIC, health);
 				this.victim.hurtTime = this.victim.maxHurtTime = 10;
 			}
 		}

@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -50,11 +51,11 @@ public class ItemCandy extends ItemFood implements IMultiItem<EnumCandyFlavour>
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+	public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems)
 	{
 		for (EnumCandyFlavour value : EnumCandyFlavour.values())
 		{
-			subItems.add(new ItemStack(itemIn, 1, value.getMetadata()));
+			subItems.add(new ItemStack(item, 1, value.getMetadata()));
 		}
 	}
 

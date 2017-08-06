@@ -56,9 +56,9 @@ public class EntityAITreater
 
 					if (MoveToNearestCandy.this.taskOwner.getDistanceToEntity(entity) < maxDistance)
 					{
-						if (entity.getEntityItem().getItem() == ModItems.CANDY)
+						if (entity.getItem().getItem() == ModItems.CANDY)
 						{
-							if (entity.getEntityItem().getMetadata() == MoveToNearestCandy.this.taskOwner.getTreaterType().getCandyType().getMetadata())
+							if (entity.getItem().getMetadata() == MoveToNearestCandy.this.taskOwner.getTreaterType().getCandyType().getMetadata())
 							{
 								// TODO - the canEasilyReach method doesn't stop treaters from trying to reach entities they can't.
 								if (entity.onGround) // && EntityAIMoveToNearestCandy.this.canEasilyReach(entity))
@@ -98,7 +98,7 @@ public class EntityAITreater
 		}
 
 		@Override
-		public boolean continueExecuting()
+		public boolean shouldContinueExecuting()
 		{
 			EntityItem entity = this.targetEntity;
 			if (entity == null)
@@ -149,8 +149,8 @@ public class EntityAITreater
 				PathPoint pathpoint = path.getFinalPathPoint();
 				if (pathpoint != null)
 				{
-					int x = pathpoint.xCoord - MathHelper.floor(entity.posX);
-					int z = pathpoint.zCoord - MathHelper.floor(entity.posZ);
+					int x = pathpoint.x - MathHelper.floor(entity.posX);
+					int z = pathpoint.z - MathHelper.floor(entity.posZ);
 					return (double)(x * x + z * z) <= 2.25D;
 				}
 			}

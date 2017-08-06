@@ -35,7 +35,7 @@ public class EntityJumpkin extends EntitySlime
 	public EntityJumpkin(World world)
 	{
 		super(world);
-		this.setSlimeSize(2);
+		this.setSlimeSize(2, true);
 		this.isImmuneToFire = true;
 	}
 
@@ -117,7 +117,7 @@ public class EntityJumpkin extends EntitySlime
 		super.readEntityFromNBT(compound);
 		this.setLit(compound.getBoolean("Lit"));
 		this.alreadySpawned = compound.getBoolean("AlreadySpawned");
-		this.setSlimeSize(2);
+		this.setSlimeSize(2, true);
 	}
 
 	@Override
@@ -230,7 +230,7 @@ public class EntityJumpkin extends EntitySlime
 	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
 	{
 		super.onInitialSpawn(difficulty, livingdata);
-		this.setSlimeSize(2);
+		this.setSlimeSize(2, true);
 		return livingdata;
 	}
 

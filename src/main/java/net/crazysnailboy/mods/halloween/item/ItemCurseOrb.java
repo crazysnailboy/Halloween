@@ -22,11 +22,13 @@ public class ItemCurseOrb extends Item
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World world, EntityPlayer player, EnumHand hand)
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
 	{
+		ItemStack stack = player.getHeldItem(hand);
+
 		if (!player.capabilities.isCreativeMode)
 		{
-			--stack.stackSize;
+			stack.shrink(1);
 		}
 
 		world.playSound((EntityPlayer)null, player.posX, player.posY, player.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.NEUTRAL, 0.5F, 0.4F / (itemRand.nextFloat() * 0.4F + 0.8F));

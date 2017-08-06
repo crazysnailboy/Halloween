@@ -39,6 +39,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -56,32 +57,32 @@ public class ModEntities
 	public static void registerEntities()
 	{
 		// hostile mobs
-		registerEntity(EntityCreeperween.class, "Creeperween", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityJumpkin.class, "Jumpkin", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityZombieHands.class, "ZombieHands", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityHallowitch.class, "Hallowitch", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityHaunter.class, "Haunter", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerEntity(EntityCreeperween.class, "creeperween", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerEntity(EntityJumpkin.class, "jumpkin", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerEntity(EntityZombieHands.class, "zombiehands", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerEntity(EntityHallowitch.class, "hallowitch", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerEntity(EntityHaunter.class, "haunter", 64, 3, true, 0x000000, 0xFFFFFF);
 		// fake hostile mobs
-		registerEntity(EntityFakeCreeper.class, "FakeCreeper", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityFakeSkeleton.class, "FakeSkeleton", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityFakeSpider.class, "FakeSpider", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityFakeZombie.class, "FakeZombie", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerEntity(EntityFakeCreeper.class, "fakecreeper", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerEntity(EntityFakeSkeleton.class, "fakeskeleton", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerEntity(EntityFakeSpider.class, "fakespider", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerEntity(EntityFakeZombie.class, "fakezombie", 64, 3, true, 0x000000, 0xFFFFFF);
 
 		// passive mobs
-		registerEntity(EntityTreater.class, "Treater", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerEntity(EntityTreater.class, "treater", 64, 3, true, 0x000000, 0xFFFFFF);
 
 		// projectiles
-		registerEntity(EntityCurseOrb.class, "CurseOrb", 64, 10, true);
+		registerEntity(EntityCurseOrb.class, "curseorb", 64, 10, true);
 		// fake projectiles
-		registerEntity(EntityFakeArrow.class, "FakeArrow", 64, 20, true);
+		registerEntity(EntityFakeArrow.class, "fakearrow", 64, 20, true);
 
 		// effects
-		registerEntity(EntityCreeperCurse.class, "CreeperCurse", 64, 3, true);
-		registerEntity(EntityGhastCurse.class, "GhastCurse", 64, 3, true);
-		registerEntity(EntitySkeletonCurse.class, "SkeletonCurse", 64, 3, true);
-		registerEntity(EntitySlimeCurse.class, "SlimeCurse", 64, 3, true);
-		registerEntity(EntitySpiderCurse.class, "SpiderCurse", 64, 3, true);
-		registerEntity(EntityZombieCurse.class, "ZombieCurse", 64, 3, true);
+		registerEntity(EntityCreeperCurse.class, "creepercurse", 64, 3, true);
+		registerEntity(EntityGhastCurse.class, "ghastcurse", 64, 3, true);
+		registerEntity(EntitySkeletonCurse.class, "skeletoncurse", 64, 3, true);
+		registerEntity(EntitySlimeCurse.class, "slimecurse", 64, 3, true);
+		registerEntity(EntitySpiderCurse.class, "spidercurse", 64, 3, true);
+		registerEntity(EntityZombieCurse.class, "zombiecurse", 64, 3, true);
 
 
 	}
@@ -110,7 +111,7 @@ public class ModEntities
 
 	private static void registerEntity(Class<? extends Entity> entityClass, String entityName, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
 	{
-		EntityRegistry.registerModEntity(entityClass, entityName, id++, HalloweenMod.instance, trackingRange, updateFrequency, sendsVelocityUpdates);
+		EntityRegistry.registerModEntity(new ResourceLocation(HalloweenMod.MODID, entityName), entityClass, entityName, id++, HalloweenMod.instance, trackingRange, updateFrequency, sendsVelocityUpdates);
 //		if (entityClass.isAssignableFrom(EntityLivingBase.class))
 //		{
 //	        EntityRegistry.registerEgg(entityClass, eggPrimary, eggSecondary);
@@ -119,7 +120,7 @@ public class ModEntities
 
 	private static void registerEntity(Class<? extends Entity> entityClass, String entityName, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates, int eggPrimary, int eggSecondary)
 	{
-		EntityRegistry.registerModEntity(entityClass, entityName, id++, HalloweenMod.instance, trackingRange, updateFrequency, sendsVelocityUpdates, eggPrimary, eggSecondary);
+		EntityRegistry.registerModEntity(new ResourceLocation(HalloweenMod.MODID, entityName), entityClass, entityName, id++, HalloweenMod.instance, trackingRange, updateFrequency, sendsVelocityUpdates, eggPrimary, eggSecondary);
 	}
 
 

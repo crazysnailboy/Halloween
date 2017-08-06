@@ -1,6 +1,5 @@
 package net.crazysnailboy.mods.halloween.entity.monster;
 
-import javax.annotation.Nullable;
 import net.crazysnailboy.mods.halloween.entity.ai.EntityAIHallowitch;
 import net.crazysnailboy.mods.halloween.entity.effect.EntityCreeperCurse;
 import net.crazysnailboy.mods.halloween.entity.effect.EntityCurse;
@@ -23,7 +22,6 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -66,7 +64,7 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 
 
 	@Override
-	public boolean processInteract(EntityPlayer player, EnumHand hand, @Nullable ItemStack stack)
+	public boolean processInteract(EntityPlayer player, EnumHand hand)
 	{
 		EntityCurse curse = null;
 		EnumCurseType curseType = EnumCurseType.getRandom();

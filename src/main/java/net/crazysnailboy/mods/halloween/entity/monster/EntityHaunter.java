@@ -172,7 +172,7 @@ public class EntityHaunter extends EntityMob
 	{
 		if (this.isWet())
 		{
-			this.attackEntityFrom(DamageSource.drown, 1.0F);
+			this.attackEntityFrom(DamageSource.DROWN, 1.0F);
 		}
 
 		--this.heightOffsetUpdateTime;
@@ -217,7 +217,7 @@ public class EntityHaunter extends EntityMob
 	public boolean attackEntityFrom(DamageSource source, float amount)
 	{
 		// if the haunter wasn't damaged by an entity, or was damaged by a mob, do nothing
-		Entity entity = source.getEntity();
+		Entity entity = source.getTrueSource();
 		if (entity == null || entity instanceof EntityMob)
 		{
 			return false;

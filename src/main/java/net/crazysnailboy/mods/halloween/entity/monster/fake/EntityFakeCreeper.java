@@ -40,7 +40,7 @@ public class EntityFakeCreeper extends EntityCreeper implements IFakeMonster
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount)
 	{
-		Entity entity = source.getEntity();
+		Entity entity = source.getTrueSource();
 		boolean takenDamage = super.attackEntityFrom(source, amount);
 
 		if (takenDamage && entity != null)

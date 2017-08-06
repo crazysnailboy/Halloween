@@ -1,6 +1,5 @@
 package net.crazysnailboy.mods.halloween.entity.monster;
 
-import javax.annotation.Nullable;
 import net.crazysnailboy.mods.halloween.init.ModItems;
 import net.crazysnailboy.mods.halloween.item.ItemCandy.EnumCandyFlavour;
 import net.minecraft.entity.Entity;
@@ -208,9 +207,10 @@ public class EntityCreeperween extends EntityMob
 	}
 
 	@Override
-	protected boolean processInteract(EntityPlayer player, EnumHand hand, @Nullable ItemStack stack)
+	protected boolean processInteract(EntityPlayer player, EnumHand hand)
 	{
-		if (stack != null && stack.getItem() == Items.FLINT_AND_STEEL)
+		ItemStack stack = player.getHeldItem(hand);
+		if (!stack.isEmpty() && stack.getItem() == Items.FLINT_AND_STEEL)
 		{
 			this.world.playSound(player, this.posX, this.posY, this.posZ, SoundEvents.ITEM_FLINTANDSTEEL_USE, this.getSoundCategory(), 1.0F, this.rand.nextFloat() * 0.4F + 0.8F);
 			player.swingArm(hand);
@@ -222,7 +222,7 @@ public class EntityCreeperween extends EntityMob
 				return true;
 			}
 		}
-		return super.processInteract(player, hand, stack);
+		return super.processInteract(player, hand);
 	}
 
 	/**

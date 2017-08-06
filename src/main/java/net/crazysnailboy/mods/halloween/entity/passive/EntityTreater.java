@@ -116,9 +116,10 @@ public class EntityTreater extends EntityAnimal
 	 * The treater will respond to the player with a chat message, and if the candy is accepted will spawn heart particles and consume the candy.
 	 */
 	@Override
-	public boolean processInteract(EntityPlayer player, EnumHand hand, @Nullable ItemStack stack)
+	public boolean processInteract(EntityPlayer player, EnumHand hand)
 	{
-		if (stack != null)
+		ItemStack stack = player.getHeldItem(hand);
+		if (!stack.isEmpty())
 		{
 			boolean consumeItem = false;
 
@@ -163,9 +164,9 @@ public class EntityTreater extends EntityAnimal
 	protected void damageEntity(DamageSource damageSource, float damageAmount)
 	{
 		super.damageEntity(damageSource, damageAmount);
-		if (damageSource.getSourceOfDamage() instanceof EntityPlayer)
+		if (damageSource.getImmediateSource() instanceof EntityPlayer)
 		{
-			EntityPlayer player = (EntityPlayer)damageSource.getSourceOfDamage();
+			EntityPlayer player = (EntityPlayer)damageSource.getImmediateSource();
 			this.chatItUp(player, EnumTreaterMessage.HURTING);
 		}
 	}
@@ -178,7 +179,7 @@ public class EntityTreater extends EntityAnimal
 	@Override
 	public void onDeath(DamageSource damageSource)
 	{
-		if (damageSource.getSourceOfDamage() instanceof EntityPlayer)
+		if (damageSource.getImmediateSource() instanceof EntityPlayer)
 		{
 			EntityMob mob = null;
 			switch (this.getTreaterType())
@@ -202,7 +203,7 @@ public class EntityTreater extends EntityAnimal
 	@Override
 	protected void updateEquipmentIfNeeded(EntityItem entity)
 	{
-		ItemStack stack = entity.getEntityItem();
+		ItemStack stack = entity.getItem();
 
 		if (stack.getItem() == ModItems.MEGA_CANDY || (stack.getItem() == ModItems.CANDY && stack.getMetadata() == this.getTreaterType().getCandyType().getMetadata()))
 		{
@@ -243,7 +244,7 @@ public class EntityTreater extends EntityAnimal
 		{
 			LootTable lootTable = this.world.getLootTableManager().getLootTableFromLocation(this.getTreaterType().getLootTable());
 			LootContext.Builder builder = new LootContext.Builder((WorldServer)this.world)
-				.withLootedEntity(this).withDamageSource(DamageSource.generic).withPlayer(player).withLuck(player.getLuck());
+				.withLootedEntity(this).withDamageSource(DamageSource.GENERIC).withPlayer(player).withLuck(player.getLuck());
 
 			for (ItemStack stack : lootTable.generateLootForPools(this.rand, builder.build()))
 			{
