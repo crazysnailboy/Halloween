@@ -1,7 +1,6 @@
 package net.crazysnailboy.mods.halloween.entity.monster;
 
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
-import net.crazysnailboy.mods.halloween.util.ReflectionUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.SoundType;
@@ -16,6 +15,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 
 public class EntityZombieHands extends EntityZombie
@@ -172,8 +172,7 @@ public class EntityZombieHands extends EntityZombie
 		zombie.prevRotationYaw = zombie.rotationYaw = this.rotationYaw;
 		zombie.setPosition(this.posX, this.posY - 0.75D, this.posZ);
 		zombie.setHealth(this.getHealth());
-		zombie.setFire(getFire(this));
-//		zombie.setFire((Integer)ObfuscationReflectionHelper.getPrivateValue(Entity.class, this, "fire", "field_70151_c"));
+		zombie.setFire((Integer)ObfuscationReflectionHelper.getPrivateValue(Entity.class, this, "fire", "field_190534_ay"));
 		zombie.setAttackTarget(this.getAttackTarget());
 		this.world.spawnEntity(zombie);
 		this.setDead();
@@ -189,8 +188,7 @@ public class EntityZombieHands extends EntityZombie
 		entity.prevRotationYaw = entity.rotationYaw = zombie.rotationYaw;
 		entity.setPosition(zombie.posX, zombie.posY, zombie.posZ);
 		entity.setHealth(zombie.getHealth());
-		entity.setFire(getFire(zombie));
-//		entity.setFire((Integer)ObfuscationReflectionHelper.getPrivateValue(Entity.class, zombie, "fire", "field_70151_c"));
+		entity.setFire((Integer)ObfuscationReflectionHelper.getPrivateValue(Entity.class, zombie, "fire", "field_190534_ay"));
 		entity.setAttackTarget(zombie.getAttackTarget());
 		this.world.spawnEntity(entity);
 		zombie.setDead();
@@ -222,13 +220,5 @@ public class EntityZombieHands extends EntityZombie
 			}
 		}
 	}
-
-
-	private static int getFire(Entity entity)
-	{
-		final java.lang.reflect.Field fire = ReflectionUtils.getDeclaredField(Entity.class, "fire", "field_70151_c");
-		return ReflectionUtils.getFieldValue(fire, entity);
-	}
-
 
 }
