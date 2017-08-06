@@ -50,11 +50,11 @@ public class ItemCandy extends ItemFood implements IMultiItem<EnumCandyFlavour>
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems)
+	public void getSubItems(Item item, CreativeTabs tab, List<ItemStack> subItems)
 	{
 		for (EnumCandyFlavour value : EnumCandyFlavour.values())
 		{
-			subItems.add(new ItemStack(itemIn, 1, value.getMetadata()));
+			subItems.add(new ItemStack(item, 1, value.getMetadata()));
 		}
 	}
 

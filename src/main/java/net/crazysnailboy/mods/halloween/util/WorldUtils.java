@@ -15,7 +15,7 @@ public class WorldUtils
 		double d0 = -1.0D;
 		T closest = null;
 
-		List<T> entities = world.getEntitiesWithinAABB(classEntity, new AxisAlignedBB(pos).expandXyz(distance));
+		List<T> entities = world.getEntitiesWithinAABB(classEntity, new AxisAlignedBB(pos).expand(distance, distance, distance));
 		if (!entities.isEmpty())
 		{
 			for (T entity : entities)
