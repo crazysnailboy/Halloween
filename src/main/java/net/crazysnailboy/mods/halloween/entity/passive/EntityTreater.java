@@ -71,7 +71,6 @@ public class EntityTreater extends EntityAnimal
 	{
 		super.entityInit();
 		this.dataManager.register(TREATER_TYPE, Integer.valueOf(0));
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
 	}
 
 	@Override
@@ -83,6 +82,13 @@ public class EntityTreater extends EntityAnimal
 		this.tasks.addTask(5, new EntityAIWander(this, 0.5D));
 		this.tasks.addTask(6, new EntityAITreater.WatchClosestPlayer(this, 6.0F));
 		this.tasks.addTask(7, new EntityAILookIdle(this));
+	}
+
+	@Override
+	protected void applyEntityAttributes()
+	{
+		super.applyEntityAttributes();
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
 	}
 
 	@Override

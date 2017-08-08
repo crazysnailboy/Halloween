@@ -12,6 +12,7 @@ import net.crazysnailboy.mods.halloween.entity.monster.EntityHallowitch;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
@@ -19,34 +20,37 @@ import net.minecraft.world.World;
 public class EntityCurseOrb extends EntityThrowable
 {
 
+	private EntityLivingBase thrower;
+
+
 	public EntityCurseOrb(World world)
-    {
-        super(world);
-    }
+	{
+		super(world);
+	}
 
 	public EntityCurseOrb(World world, EntityLivingBase thrower)
-    {
-        super(world, thrower);
-    }
+	{
+		super(world, thrower);
+		this.thrower = thrower;
+	}
 
 	public EntityCurseOrb(World world, double x, double y, double z)
-    {
-        super(world, x, y, z);
-    }
+	{
+		super(world, x, y, z);
+	}
 
 
 	@Override
 	protected void onImpact(RayTraceResult result)
 	{
-		if (result.entityHit != null)
+		if (!this.world.isRemote)
 		{
-			if (result.entityHit instanceof EntityPlayer)
+			if (result.entityHit != null && result.entityHit instanceof EntityPlayer)
 			{
 				EntityPlayer player = (EntityPlayer)result.entityHit;
-
 				EntityCurse curse = null;
-				EnumCurseType curseType = EnumCurseType.getRandom();
 
+				EnumCurseType curseType = EnumCurseType.getRandom();
 				switch (curseType)
 				{
 					case CREEPER: curse = new EntityCreeperCurse(this.world, player); break;
@@ -65,16 +69,17 @@ public class EntityCurseOrb extends EntityThrowable
 					witch.spawnExplosionParticle();
 				}
 			}
+
+			this.setDead();
 		}
 	}
-
 
 	@Override
 	public void onCollideWithPlayer(EntityPlayer player)
 	{
-		if (this.inGround && this.getThrower() == player && this.throwableShake <= 0)
+		if (!this.world.isRemote && this.thrower == player && this.inGround && this.throwableShake <= 0)
 		{
-//			worldObj.playSoundAtEntity(this, "random.pop", 0.2F, ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+			this.playSound(SoundEvents.ENTITY_ITEM_PICKUP, 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 			player.onItemPickup(this, 1);
 			this.setDead();
 		}
