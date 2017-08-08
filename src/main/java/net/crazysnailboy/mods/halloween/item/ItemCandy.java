@@ -38,7 +38,7 @@ public class ItemCandy extends ItemFood implements IMultiItem<EnumCandyFlavour>
 	@Override
 	protected void onFoodEaten(ItemStack stack, World world, EntityPlayer player)
 	{
-		List<EntityCurse> entitiesCurse = world.getEntitiesWithinAABB(EntityCurse.class, player.getEntityBoundingBox().expand(4D, 4D, 4D));
+		List<EntityCurse> entitiesCurse = world.getEntitiesWithinAABB(EntityCurse.class, player.getEntityBoundingBox().expand(4.0D, 4.0D, 4.0D));
 		for (EntityCurse entityCurse : entitiesCurse)
 		{
 			if (entityCurse.victim == player)

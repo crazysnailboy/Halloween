@@ -18,6 +18,7 @@ public class EntityZombieCurse extends EntityCurse
 		super(world, victim);
 	}
 
+
 	@Override
 	public void onUpdate()
 	{

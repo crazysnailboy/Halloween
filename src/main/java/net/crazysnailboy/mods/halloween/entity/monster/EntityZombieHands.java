@@ -1,5 +1,6 @@
 package net.crazysnailboy.mods.halloween.entity.monster;
 
+import javax.annotation.Nullable;
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
 import net.crazysnailboy.mods.halloween.util.EntityUtils;
 import net.minecraft.block.Block;
@@ -7,6 +8,7 @@ import net.minecraft.block.BlockAir;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumParticleTypes;
@@ -23,12 +25,15 @@ public class EntityZombieHands extends EntityZombie
 	private int jackson;
 	private boolean hideWithMe;
 
+
 	public EntityZombieHands(World world)
 	{
 		super(world);
+		this.setChild(false);
 		this.setAIMoveSpeed(0.4F);
 		this.setSize(0.6F, 0.8F);
 	}
+
 
 	@Override
 	protected SoundEvent getDeathSound()
@@ -42,20 +47,19 @@ public class EntityZombieHands extends EntityZombie
 		return ModLootTables.ENTITIES_HALLOWMOB;
 	}
 
-
-	@Override
-	public void jump()
-	{
-		if (this.getAttackTarget() != null && this.isCollidedHorizontally)
-		{
-			this.jackson += 2;
-			if (this.jackson >= 25)
-			{
-				EntityZombie zombie = this.unearthMe();
-				zombie.motionY = 0.5D;
-			}
-		}
-	}
+//	@Override
+//	public void jump()
+//	{
+//		if (this.getAttackTarget() != null && this.isCollidedHorizontally)
+//		{
+//			this.jackson += 2;
+//			if (this.jackson >= 25)
+//			{
+//				EntityZombie zombie = this.unearthMe();
+//				zombie.motionY = 0.5D;
+//			}
+//		}
+//	}
 
 //	@Override
 //	public boolean getCanSpawnHere()
@@ -160,6 +164,18 @@ public class EntityZombieHands extends EntityZombie
 	{
 		super.readEntityFromNBT(compound);
 		this.hideWithMe = compound.getBoolean("HideWithMe");
+		this.setChild(false);
+	}
+
+	/**
+	 * Overridden to call {@link EntityZombie#setChild(boolean)} to force all ZombieHands to be adults
+	 */
+	@Override
+	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
+	{
+		super.onInitialSpawn(difficulty, livingdata);
+		this.setChild(false);
+		return livingdata;
 	}
 
 
@@ -173,6 +189,7 @@ public class EntityZombieHands extends EntityZombie
 		zombie.setHealth(this.getHealth());
 		zombie.setFire(EntityUtils.getFire(this));
 		zombie.setAttackTarget(this.getAttackTarget());
+
 		this.world.spawnEntity(zombie);
 		this.setDead();
 		this.springEffect();
@@ -189,6 +206,7 @@ public class EntityZombieHands extends EntityZombie
 		entity.setHealth(zombie.getHealth());
 		entity.setFire(EntityUtils.getFire(zombie));
 		entity.setAttackTarget(zombie.getAttackTarget());
+
 		this.world.spawnEntity(entity);
 		zombie.setDead();
 		entity.springEffect();

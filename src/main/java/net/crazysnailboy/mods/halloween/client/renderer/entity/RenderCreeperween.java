@@ -1,6 +1,7 @@
 package net.crazysnailboy.mods.halloween.client.renderer.entity;
 
 import net.crazysnailboy.mods.halloween.HalloweenMod;
+import net.crazysnailboy.mods.halloween.client.renderer.entity.layers.LayerCreeperweenEyes;
 import net.crazysnailboy.mods.halloween.entity.monster.EntityCreeperween;
 import net.minecraft.client.model.ModelCreeper;
 import net.minecraft.client.renderer.GlStateManager;
@@ -10,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 
 @SideOnly(Side.CLIENT)
 public class RenderCreeperween extends RenderLiving<EntityCreeperween>
@@ -21,6 +23,7 @@ public class RenderCreeperween extends RenderLiving<EntityCreeperween>
 	public RenderCreeperween(RenderManager renderManager)
 	{
 		super(renderManager, new ModelCreeper(), 0.4F);
+		this.addLayer(new LayerCreeperweenEyes(this));
 	}
 
 
@@ -41,7 +44,6 @@ public class RenderCreeperween extends RenderLiving<EntityCreeperween>
 	protected int getColorMultiplier(EntityCreeperween entity, float lightBrightness, float partialTickTime)
 	{
 		float f = entity.getCreeperFlashIntensity(partialTickTime);
-
 		if ((int)(f * 10.0F) % 2 == 0)
 		{
 			return 0;
@@ -50,10 +52,9 @@ public class RenderCreeperween extends RenderLiving<EntityCreeperween>
 		{
 			int i = (int)(f * 0.2F * 255.0F);
 			i = MathHelper.clamp(i, 0, 255);
-			return i << 24 | 0x30FFFFFF; // 822083583;
+			return i << 24 | 0x30FFFFFF;
 		}
 	}
-
 
 	@Override
 	protected ResourceLocation getEntityTexture(EntityCreeperween entity)

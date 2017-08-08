@@ -5,7 +5,6 @@ import org.lwjgl.opengl.GL13;
 import net.crazysnailboy.mods.halloween.client.model.ModelCurse;
 import net.crazysnailboy.mods.halloween.entity.effect.EntityCurse;
 import net.crazysnailboy.mods.halloween.entity.effect.EntityCurse.EnumCurseType;
-import net.crazysnailboy.mods.halloween.entity.effect.EntityGhastCurse;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -25,15 +24,20 @@ public class RenderCurse extends Render<EntityCurse>
 	private static final ResourceLocation SPIDER_TEXTURES = new ResourceLocation("textures/entity/spider/spider.png");
 	private static final ResourceLocation ZOMBIE_TEXTURES = new ResourceLocation("textures/entity/zombie/zombie.png");
 
+	private ModelBase mainModel;
     private final ModelBase defaultCurseModel;
     private final ModelBase ghastCurseModel;
+    private final ModelBase spiderCurseModel;
+    private final ModelBase zombieCurseModel;
 
 
 	public RenderCurse(RenderManager renderManager)
 	{
 		super(renderManager);
-		this.defaultCurseModel = new ModelCurse();
 		this.ghastCurseModel = new ModelCurse(EnumCurseType.GHAST);
+		this.spiderCurseModel = new ModelCurse(EnumCurseType.SPIDER);
+		this.zombieCurseModel = new ModelCurse(EnumCurseType.ZOMBIE);
+		this.defaultCurseModel = new ModelCurse();
 	}
 
 
@@ -53,14 +57,14 @@ public class RenderCurse extends Render<EntityCurse>
 			float headPitch = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
 			float scale = 0.0625F;
 
-			GL11.glTranslatef((float)x, (float)y, (float)z); // this.renderLivingAt(entity, x, y, z);
+			GL11.glTranslatef((float)x, (float)y, (float)z);
 
 			for (int i = 0; i < 3; i++)
 			{
 				GL11.glPushMatrix();
 
-				GL11.glRotatef(180.0F - rotation, 0.0F, rotation, 0.0F); // this.rotateCorpse(entity, 0.0F, f2, 0.0F);
-				rotation += 120F;
+				GL11.glRotatef(180.0F - rotation, 0.0F, rotation, 0.0F);
+				rotation += 120.0F;
 
 				GL11.glEnable(32826 /*GL_RESCALE_NORMAL_EXT*/);
 				GL11.glScalef(-1.0F, -1.0F, 1.0F);
@@ -74,14 +78,8 @@ public class RenderCurse extends Render<EntityCurse>
 				GL11.glDisable(3008 /*GL_ALPHA_TEST*/);
 				GL11.glBlendFunc(1, 1);
 
-				if (entity instanceof EntityGhastCurse)
-				{
-					this.ghastCurseModel.render(entity, 0.0F, 0.0F, ageInTicks, netHeadYaw, headPitch, scale);
-				}
-				else
-				{
-					this.defaultCurseModel.render(entity, 0.0F, 0.0F, ageInTicks, netHeadYaw, headPitch, scale);
-				}
+				this.switchModel(entity);
+				this.mainModel.render(entity, 0.0F, 0.0F, ageInTicks, netHeadYaw, headPitch, scale);
 
 				GL11.glPopMatrix();
 			}
@@ -119,27 +117,6 @@ public class RenderCurse extends Render<EntityCurse>
 		GL11.glColor4f(coller, coller, coller, 1.0F);
 	}
 
-//	private void renderLivingAt(EntityCurse entity, double x, double y, double z)
-//	{
-//		GL11.glTranslatef((float)x, (float)y, (float)z);
-//	}
-
-//	private float handleRotationFloat(EntityCurse entity, float partialTicks)
-//	{
-//		return (float)entity.ticksExisted + partialTicks;
-//	}
-
-//	private int getColorMultiplier(EntityCurse entity, float lightBrightness, float partialTickTime)
-//	{
-//		return 0;
-//	}
-
-//	private void rotateCorpse(EntityCurse entity, float x, float y, float z)
-//	{
-//		GL11.glRotatef(180.0F - y, 0.0F, 1.0F, 0.0F);
-//	}
-
-
 	@Override
 	protected ResourceLocation getEntityTexture(EntityCurse entity)
 	{
@@ -154,5 +131,21 @@ public class RenderCurse extends Render<EntityCurse>
 		}
 		return null;
 	}
+
+	private void switchModel(EntityCurse entity)
+	{
+		EnumCurseType curseType = entity.getCurseType();
+		switch(curseType)
+		{
+//			case CREEPER: break;
+			case GHAST: this.mainModel = this.ghastCurseModel; break;
+//			case SKELETON: break;
+//			case SLIME: break;
+			case SPIDER: this.mainModel = this.spiderCurseModel; break;
+			case ZOMBIE: this.mainModel = this.zombieCurseModel; break;
+			default: this.mainModel = this.defaultCurseModel;
+		}
+	}
+
 
 }
