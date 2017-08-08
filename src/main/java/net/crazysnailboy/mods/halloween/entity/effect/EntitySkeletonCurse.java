@@ -46,7 +46,7 @@ public class EntitySkeletonCurse extends EntityCurse
 	@Override
 	public void doTickSound()
 	{
-		this.playSound(SoundEvents.ENTITY_SKELETON_HURT, 0.75F, (this.rand.nextFloat() * 0.4F) + 0.8F); // "mob.skeletonhurt"
+		this.playSound(SoundEvents.ENTITY_SKELETON_HURT, 0.75F, (this.rand.nextFloat() * 0.4F) + 0.8F);
 	}
 
 	@Override

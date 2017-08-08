@@ -23,7 +23,6 @@ public class EntityGhastCurse extends EntityCurse
 	public EntityGhastCurse(World world, EntityLivingBase victim)
 	{
 		super(world, victim);
-		this.lifetime = 1800;
 	}
 
 	@Override
@@ -33,7 +32,7 @@ public class EntityGhastCurse extends EntityCurse
 		this.swell = 10;
 		if (this.lifetime > 0 && this.victim != null)
 		{
-			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(50D, 50D, 50D));
+			List<Entity> list = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(50.0D, 50.0D, 50.0D));
 			for ( Entity entity : list )
 			{
 				if (entity instanceof EntityMob && entity != this.victim)
@@ -52,7 +51,7 @@ public class EntityGhastCurse extends EntityCurse
 	@Override
 	public void doTickSound()
 	{
-		this.playSound(SoundEvents.ENTITY_GHAST_SCREAM, 2.0F, (this.rand.nextFloat() * 0.4F) + 0.8F); // "mob.ghast.scream"
+		this.playSound(SoundEvents.ENTITY_GHAST_SCREAM, 2.0F, (this.rand.nextFloat() * 0.4F) + 0.8F);
 	}
 
 	@Override
