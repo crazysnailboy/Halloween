@@ -19,8 +19,9 @@ public class EntitySkeletonCurse extends EntityCurse
 		super(world, victim);
 	}
 
+
 	@Override
-	public void performCurse() // TODO
+	public void performCurse()
 	{
 		super.performCurse();
 
@@ -33,16 +34,9 @@ public class EntitySkeletonCurse extends EntityCurse
 			if (health <= 0)
 			{
 				this.victim.setHealth(amount);
-//				if (health < 0)
-//				{
-//					this.victim.setHealth(this.victim.getHealth() / 2);
-//				}
 			}
 			else
 			{
-//				this.victim.field_9346_af = health;
-//				this.victim.prevHealth = this.victim.health;
-//				this.victim.heartsLife = this.victim.heartsHalvesLife;
 				this.victim.attackEntityFrom(DamageSource.generic, health);
 				this.victim.hurtTime = this.victim.maxHurtTime = 10;
 			}
@@ -60,6 +54,5 @@ public class EntitySkeletonCurse extends EntityCurse
 	{
 		return EnumCurseType.SKELETON;
 	}
-
 
 }

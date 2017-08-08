@@ -67,5 +67,13 @@ effect.skeletonCurse=Skeleton Curse
 effect.spiderCurse=Spider Curse
 effect.zombieCurse=Zombie Curse
 
+entity.halloween.Creeperween.name=Creeperween
 entity.halloween.Jumpkin.name=Jumpkin
+entity.halloween.Hallowitch.name=Hallowitch
+entity.halloween.Haunter.name=Haunter
 entity.halloween.Treater.name=Treater
+entity.halloween.ZombieHands.name=ZombieHands
+entity.halloween.FakeCreeper.name=Creeper
+entity.halloween.FakeSkeleton.name=Skeleton
+entity.halloween.FakeSpider.name=Spider
+entity.halloween.FakeZombie.name=Zombie

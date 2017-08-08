@@ -8,6 +8,7 @@ import net.crazysnailboy.mods.halloween.item.ItemCandy.EnumCandyFlavour;
 import net.crazysnailboy.mods.halloween.util.BlockUtils;
 import net.crazysnailboy.mods.halloween.util.EntityUtils;
 import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAITempt;
@@ -47,7 +48,6 @@ import net.minecraft.world.storage.loot.LootTableList;
 public class EntityTreater extends EntityAnimal
 {
 
-//	private static final Set<Item> TEMPTATION_ITEMS = Sets.newHashSet(new Item[] { ModItems.CANDY, ModItems.MEGA_CANDY });
 	private static final DataParameter<Integer> TREATER_TYPE = EntityDataManager.<Integer>createKey(EntityTreater.class, DataSerializers.VARINT);
 
 
@@ -71,6 +71,7 @@ public class EntityTreater extends EntityAnimal
 	{
 		super.entityInit();
 		this.dataManager.register(TREATER_TYPE, Integer.valueOf(0));
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
 	}
 
 	@Override
@@ -84,32 +85,20 @@ public class EntityTreater extends EntityAnimal
 		this.tasks.addTask(7, new EntityAILookIdle(this));
 	}
 
-
-	public EnumTreaterType getTreaterType()
+	@Override
+	public void onLivingUpdate()
 	{
-		return EnumTreaterType.values()[this.dataManager.get(TREATER_TYPE).intValue()];
+		if (!this.world.isRemote)
+		{
+			// make treaters despawn when it becomes daytime
+			if (this.world.isDaytime())
+			{
+				this.setDead();
+				this.spawnExplosionParticle();
+			}
+		}
+		super.onLivingUpdate();
 	}
-
-	private void setTreaterType(int value)
-	{
-		this.dataManager.set(TREATER_TYPE, value);
-	}
-
-	private void setTreaterType(EnumTreaterType value)
-	{
-		this.dataManager.set(TREATER_TYPE, value.ordinal());
-	}
-
-
-	/**
-	 * Sends a chat message to the target player.
-	 * The message sent is chosen at random from those available for the message type, and where appropriate the treater type.
-	 */
-	public void chatItUp(EntityPlayer player, EnumTreaterMessage messageType)
-	{
-		player.sendMessage(new TextComponentTranslation(messageType.getTranslationKey(this.getTreaterType())));
-	}
-
 
 	/**
 	 * If the player tries to give the treater candy, they will accept it if it's their favourite type, or if it's mega candy.
@@ -154,7 +143,6 @@ public class EntityTreater extends EntityAnimal
 		return false; // EntityAgeable#processInteract only returns true if the item is a spawn egg
 	}
 
-
 	/**
 	 * When a treater is hurt by a player,
 	 * The treater will send a chat message to that player
@@ -169,7 +157,6 @@ public class EntityTreater extends EntityAnimal
 			this.chatItUp(player, EnumTreaterMessage.HURTING);
 		}
 	}
-
 
 	/**
 	 * When a treater is killed by a player,
@@ -194,7 +181,6 @@ public class EntityTreater extends EntityAnimal
 		}
 		super.onDeath(damageSource);
 	}
-
 
 	/**
 	 * Used to make treaters pick up items.
@@ -226,61 +212,7 @@ public class EntityTreater extends EntityAnimal
 			}
 			entity.setDead();
 		}
-//		if (stack != null && TEMPTATION_ITEMS.contains(stack.getItem()))
-//		{
-//			entity.setDead();
-//		}
 	}
-
-
-	/**
-	 * Drop items from the loot table of the entity this Treater is costumed as.
-	 * Used to give "thankyou" items to players who give Treaters candy.
-	 */
-	private void dropThankItem(EntityPlayer player)
-	{
-		if (!this.world.isRemote)
-		{
-			LootTable lootTable = this.world.getLootTableManager().getLootTableFromLocation(this.getTreaterType().getLootTable());
-			LootContext.Builder builder = new LootContext.Builder((WorldServer)this.world)
-				.withLootedEntity(this).withDamageSource(DamageSource.generic).withPlayer(player).withLuck(player.getLuck());
-
-			for (ItemStack stack : lootTable.generateLootForPools(this.rand, builder.build()))
-			{
-				InventoryHelper.spawnItemStack(this.world, this.posX, this.posY, this.posZ, stack);
-
-//				this.entityDropItem(stack, 0.0F);
-			}
-		}
-	}
-
-
-
-//	/**
-//	 * Used to spawn particles.
-//	 * An id value of 13 will spawn angry villager particles (see {@link EntityVillager##handleStatusUpdate(byte)}),
-//	 * while an id value of 18 will spawn heart particles (see {@link EntityAnimal#handleStatusUpdate(byte)}).
-//	 */
-//	@Override
-//	@SideOnly(Side.CLIENT)
-//	public void handleStatusUpdate(byte id)
-//	{
-//		if (id == 13)
-//		{
-//			for (int i = 0; i < 7; ++i)
-//			{
-//				double d0 = this.rand.nextGaussian() * 0.02D;
-//				double d1 = this.rand.nextGaussian() * 0.02D;
-//				double d2 = this.rand.nextGaussian() * 0.02D;
-//				this.world.spawnParticle(EnumParticleTypes.VILLAGER_ANGRY, this.posX + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, this.posY + 0.5D + (double)(this.rand.nextFloat() * this.height), this.posZ + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, d0, d1, d2, new int[0]);
-//			}
-//		}
-//		else
-//		{
-//			super.handleStatusUpdate(id);
-//		}
-//	}
-
 
 	@Override
 	public boolean getCanSpawnHere()
@@ -313,7 +245,6 @@ public class EntityTreater extends EntityAnimal
 		return false;
 	}
 
-
 	@Override
 	public void writeEntityToNBT(NBTTagCompound compound)
 	{
@@ -329,6 +260,49 @@ public class EntityTreater extends EntityAnimal
 		this.setCanPickUpLoot(true); // EntityVillager sets this to true here as well
 	}
 
+
+	public EnumTreaterType getTreaterType()
+	{
+		return EnumTreaterType.values()[this.dataManager.get(TREATER_TYPE).intValue()];
+	}
+
+	private void setTreaterType(int value)
+	{
+		this.dataManager.set(TREATER_TYPE, value);
+	}
+
+	private void setTreaterType(EnumTreaterType value)
+	{
+		this.dataManager.set(TREATER_TYPE, value.ordinal());
+	}
+
+	/**
+	 * Drop items from the loot table of the entity this Treater is costumed as.
+	 * Used to give "thankyou" items to players who give Treaters candy.
+	 */
+	private void dropThankItem(EntityPlayer player)
+	{
+		if (!this.world.isRemote)
+		{
+			LootTable lootTable = this.world.getLootTableManager().getLootTableFromLocation(this.getTreaterType().getLootTable());
+			LootContext.Builder builder = new LootContext.Builder((WorldServer)this.world)
+				.withLootedEntity(this).withDamageSource(DamageSource.generic).withPlayer(player).withLuck(player.getLuck());
+
+			for (ItemStack stack : lootTable.generateLootForPools(this.rand, builder.build()))
+			{
+				InventoryHelper.spawnItemStack(this.world, this.posX, this.posY, this.posZ, stack);
+			}
+		}
+	}
+
+	/**
+	 * Sends a chat message to the target player.
+	 * The message sent is chosen at random from those available for the message type, and where appropriate the treater type.
+	 */
+	public void chatItUp(EntityPlayer player, EnumTreaterMessage messageType)
+	{
+		player.sendMessage(new TextComponentTranslation(messageType.getTranslationKey(this.getTreaterType())));
+	}
 
 
 	public enum EnumTreaterMessage

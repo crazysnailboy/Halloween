@@ -8,6 +8,7 @@ import net.crazysnailboy.mods.halloween.entity.effect.EntitySkeletonCurse;
 import net.crazysnailboy.mods.halloween.entity.effect.EntitySlimeCurse;
 import net.crazysnailboy.mods.halloween.entity.effect.EntitySpiderCurse;
 import net.crazysnailboy.mods.halloween.entity.effect.EntityZombieCurse;
+import net.crazysnailboy.mods.halloween.entity.monster.EntityHallowitch;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -57,6 +58,12 @@ public class EntityCurseOrb extends EntityThrowable
 				}
 				this.world.spawnEntity(curse);
 
+				if (this.getThrower() instanceof EntityHallowitch)
+				{
+					EntityHallowitch witch = (EntityHallowitch)this.getThrower();
+					witch.setDead();
+					witch.spawnExplosionParticle();
+				}
 			}
 		}
 	}
