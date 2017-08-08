@@ -42,6 +42,7 @@ public class ModelTreaterSpider extends ModelBiped
 		this.bipedLeftArm3.setRotationPoint(4.0F, 9.0F + p_i1149_2_, 0.0F);
 	}
 
+
 	@Override
 	public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
 	{

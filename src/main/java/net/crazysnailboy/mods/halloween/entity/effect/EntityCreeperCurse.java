@@ -19,11 +19,11 @@ public class EntityCreeperCurse extends EntityCurse
 		super(world, victim);
 	}
 
+
 	@Override
 	public void onUpdate()
 	{
 		super.onUpdate();
-
 		if (this.lifetime > 0 && this.victim != null && this.victim instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)this.victim;

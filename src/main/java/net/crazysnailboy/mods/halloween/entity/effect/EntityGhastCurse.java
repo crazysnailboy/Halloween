@@ -25,6 +25,7 @@ public class EntityGhastCurse extends EntityCurse
 		super(world, victim);
 	}
 
+
 	@Override
 	public void performCurse()
 	{

@@ -24,7 +24,6 @@ public class EntitySkeletonCurse extends EntityCurse
 	public void performCurse()
 	{
 		super.performCurse();
-
 		this.dash = 8;
 		if (this.lifetime > 0 && this.victim != null)
 		{

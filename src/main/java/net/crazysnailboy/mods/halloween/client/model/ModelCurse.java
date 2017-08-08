@@ -5,6 +5,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 
+
 public class ModelCurse extends ModelBase
 {
 
@@ -18,14 +19,25 @@ public class ModelCurse extends ModelBase
 
 	public ModelCurse(EnumCurseType curseType)
 	{
-		this.head = new ModelRenderer(this, 0, 0);
 		if (curseType == EnumCurseType.GHAST)
 		{
-			this.head.addBox(-8.0F, -8.0F, -8.0F, 16, 16, 16, -4.0F);
+			this.head = new ModelRenderer(this, 0, 0);
+			this.head.addBox(-8.0F, -12.0F, -8.0F, 16, 16, 16, -4.0F);
+		}
+		else if (curseType == EnumCurseType.SPIDER)
+		{
+			this.head = new ModelRenderer(this, 32, 4);
+			this.head.addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8);
+		}
+		else if (curseType == EnumCurseType.ZOMBIE)
+		{
+			this.head = new ModelRenderer(this, 0, 0).setTextureSize(64, 64);
+			this.head.addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8);
 		}
 		else
 		{
-			this.head.addBox(-4.0F, -4.0F, -4.0F, 8, 8, 8);
+			this.head = new ModelRenderer(this, 0, 0);
+			this.head.addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8);
 		}
 		this.head.setRotationPoint(0.0F, 0.0F, 0.0F);
 	}

@@ -5,6 +5,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 
+
 public class ModelWitchClothes extends ModelBiped
 {
 
@@ -25,10 +26,10 @@ public class ModelWitchClothes extends ModelBiped
 
 	public ModelWitchClothes(float modelSize, float p_i1149_2_, int textureWidthIn, int textureHeightIn)
 	{
-        this.leftArmPose = ModelBiped.ArmPose.EMPTY;
-        this.rightArmPose = ModelBiped.ArmPose.EMPTY;
-        this.textureWidth = textureWidthIn;
-        this.textureHeight = textureHeightIn;
+		this.leftArmPose = ModelBiped.ArmPose.EMPTY;
+		this.rightArmPose = ModelBiped.ArmPose.EMPTY;
+		this.textureWidth = textureWidthIn;
+		this.textureHeight = textureHeightIn;
 
 
 		this.bipedHat = new ModelRendererPyramid(this, 0, 14);
@@ -64,6 +65,7 @@ public class ModelWitchClothes extends ModelBiped
 		this.bipedCross2.addBox(-3.0F, 3F, -4F, 4, 1, 1, modelSize - 0.3F);
 		this.bipedCross2.setRotationPoint(0.0F, 0.0F + p_i1149_2_, 0.0F);
 	}
+
 
 	@Override
 	public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
