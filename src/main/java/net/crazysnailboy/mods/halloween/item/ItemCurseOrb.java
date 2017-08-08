@@ -14,8 +14,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+
 public class ItemCurseOrb extends Item
 {
+
 	public ItemCurseOrb()
 	{
 		this.setMaxStackSize(8);
@@ -48,6 +50,7 @@ public class ItemCurseOrb extends Item
 	@SideOnly(Side.CLIENT)
 	public static class ColorHandler implements IItemColor
 	{
+
 		@Override
 		public int getColorFromItemstack(ItemStack stack, int tintIndex)
 		{
