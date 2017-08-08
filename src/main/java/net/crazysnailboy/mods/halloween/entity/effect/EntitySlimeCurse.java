@@ -24,7 +24,6 @@ public class EntitySlimeCurse extends EntityCurse
 	{
 		super.performCurse();
 		this.lift = 8;
-
 //		if (this.lifetime > 0 && this.victim != null && this.victim instanceof EntityPlayer)
 //		{
 //			EntityPlayer player = (EntityPlayer)this.victim;

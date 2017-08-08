@@ -18,6 +18,7 @@ public class EntitySpiderCurse extends EntityCurse
 		super(world, victim);
 	}
 
+
 	@Override
 	public void performCurse()
 	{

@@ -44,7 +44,7 @@ public abstract class EntityCurse extends Entity
 		{
 			if (this.victim instanceof EntityPlayer)
 			{
-				((EntityPlayer)this.victim).sendMessage(new TextComponentTranslation("chat.curse.struck", this.getCurseType().getName()));
+				((EntityPlayer)this.victim).sendMessage(new TextComponentTranslation("chat.curse.struck", this.getCurseType().getDisplayName()));
 			}
 			this.setPosition(this.victim.posX, this.victim.posY + this.victim.getEyeHeight(), this.victim.posZ);
 		}
@@ -195,28 +195,50 @@ public abstract class EntityCurse extends Entity
 
 	public enum EnumCurseType
 	{
-		CREEPER("§6" + "Creeper"),
-		GHAST("§a" + "Ghast"),
-		SKELETON("§b" + "Skeleton"),
-		SLIME("§c" + "Slime"),
-		SPIDER("§d" + "Spider"),
-		ZOMBIE("§e" + "Zombie");
+		CREEPER("creeper", "§6" + "Creeper"),
+		GHAST("ghast", "§a" + "Ghast"),
+		SKELETON("skeleton", "§b" + "Skeleton"),
+		SLIME("slime", "§c" + "Slime"),
+		SPIDER("spider", "§d" + "Spider"),
+		ZOMBIE("zombie", "§e" + "Zombie");
 
 		private final String curseName;
+		private final String dislayName;
 
-		private EnumCurseType(String curseName)
+
+		private EnumCurseType(String curseName, String displayName)
 		{
 			this.curseName = curseName;
+			this.dislayName = displayName;
 		}
+
 
 		public String getName()
 		{
 			return this.curseName;
 		}
 
+		public String getDisplayName()
+		{
+			return this.dislayName;
+		}
+
+
 		public static EnumCurseType getRandom()
 		{
 			return values()[new Random().nextInt(values().length)];
+		}
+
+		public static EnumCurseType byName(String curseName)
+		{
+			for ( EnumCurseType value : values())
+			{
+				if (value.curseName.equals(curseName))
+				{
+					return value;
+				}
+			}
+			return null;
 		}
 
 	}

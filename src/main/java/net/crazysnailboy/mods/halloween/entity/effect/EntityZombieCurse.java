@@ -18,11 +18,11 @@ public class EntityZombieCurse extends EntityCurse
 		super(world, victim);
 	}
 
+
 	@Override
 	public void onUpdate()
 	{
 		super.onUpdate();
-
 		if (this.lifetime > 0 && this.victim != null)
 		{
 			this.victim.motionX *= 0.625D;

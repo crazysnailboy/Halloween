@@ -56,6 +56,7 @@ public class ModelRendererPyramid extends ModelRenderer
 		modelbase.boxList.add(this);
 	}
 
+
 	@Override
 	public ModelRenderer addBox(float offX, float offY, float offZ, int width, int height, int depth)
 	{
