@@ -61,56 +61,34 @@ public class EntityGhastCurse extends EntityCurse
 		return EnumCurseType.GHAST;
 	}
 
-
-	private void roamNear(EntityLivingBase lure, EntityCreature creature, float distance)
+	private void roamNear(EntityLivingBase entityLivingBase, EntityCreature entityCreature, float distance)
 	{
 		if (distance <= 14.0F)
 		{
-			creature.getNavigator().tryMoveToEntityLiving(lure, 1.0D);
-//			PathEntity dogs = world.getPathToEntity(creature, lure, 16F);
-//			if (dogs != null)
-//			{
-//				creature.setPathToEntity(dogs);
-//			}
+			entityCreature.getNavigator().tryMoveToEntityLiving(entityLivingBase, 1.0D);
 		}
 		else
 		{
-			double a = lure.posX - creature.posX;
-			double b = lure.posZ - creature.posZ;
-			double crazy = Math.atan2(a, b);
-			crazy += (this.rand.nextFloat() - this.rand.nextFloat()) * 0.75D;
-			double c = creature.posX + (Math.sin(crazy) * 8F);
-			double d = creature.posZ + (Math.cos(crazy) * 8F);
+			double distanceX = entityLivingBase.posX - entityCreature.posX;
+			double distanceZ = entityLivingBase.posZ - entityCreature.posZ;
 
-			int x = MathHelper.floor(c);
-			int y = MathHelper.floor(creature.getEntityBoundingBox().minY);
-			int z = MathHelper.floor(d);
+			double arctan = Math.atan2(distanceX, distanceZ) + ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.75D);
+
+			int x = MathHelper.floor(entityCreature.posX + (Math.sin(arctan) * 8.0F));
+			int y = MathHelper.floor(entityCreature.getEntityBoundingBox().minY);
+			int z = MathHelper.floor(entityCreature.posZ + (Math.cos(arctan) * 8.0F));
 
 			for (int q = 0; q < 16; q++)
 			{
 				BlockPos pos = new BlockPos(x + this.rand.nextInt(4) - this.rand.nextInt(4), y + this.rand.nextInt(3) - this.rand.nextInt(3), this.rand.nextInt(4) - this.rand.nextInt(4));
 				if (pos.getY() > 4 && pos.getY() < 255 && this.isPassable(pos) && !this.isPassable(pos.down()))
 				{
-					EntityLivingBase lure1 = WorldUtils.getClosestEntity(this.world, EntityLivingBase.class, pos, 16.0F);
-					if (creature.getNavigator().tryMoveToEntityLiving(lure1, 1.0D))
+					EntityLivingBase entity = WorldUtils.getClosestEntity(this.world, EntityLivingBase.class, pos, 16.0F);
+					if (entity != null && entityCreature.getNavigator().tryMoveToEntityLiving(entity, 1.0D))
 					{
 						break;
 					}
 				}
-
-//				int i = x + rand.nextInt(4) - rand.nextInt(4);
-//				int j = y + rand.nextInt(3) - rand.nextInt(3);
-//				int k = z + rand.nextInt(4) - rand.nextInt(4);
-
-//				if (j > 4 && j < 254 && isAirySpace(i, j, k) && !isAirySpace(i, j - 1, k))
-//				{
-//					PathEntity dogs = world.getEntityPathToXYZ(creature, i, j, k, 16F);
-//					if (dogs != null)
-//					{
-//						creature.setPathToEntity(dogs);
-//						break;
-//					}
-//				}
 			}
 		}
 	}

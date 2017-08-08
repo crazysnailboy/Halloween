@@ -64,8 +64,8 @@ public class ItemCandy extends ItemFood implements IMultiItem<EnumCandyFlavour>
 		WATERMELON(0, "red", "", 0xC3614C),
 		APPLE(1, "green", "", 0x41CD34),
 		LEMON(2, "yellow", "", 0xDECF2A),
-		PUMPKIN(3, "orange", "", 0x7B2FBE),
-		GRAPE(4, "purple", "", 0xEB8844);
+		PUMPKIN(3, "orange", "", 0xEB8844),
+		GRAPE(4, "purple", "", 0x7B2FBE);
 
 		private static final EnumCandyFlavour[] META_LOOKUP = new EnumCandyFlavour[values().length];
 
