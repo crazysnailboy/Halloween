@@ -43,7 +43,7 @@ public class EntitySlimeCurse extends EntityCurse
 	@Override
 	public void doTickSound()
 	{
-		this.playSound(SoundEvents.ENTITY_SLIME_HURT, 0.5F, (this.rand.nextFloat() * 0.4F) + 0.8F); // "mob.slime"
+		this.playSound(SoundEvents.ENTITY_SLIME_HURT, 0.5F, (this.rand.nextFloat() * 0.4F) + 0.8F);
 	}
 
 	@Override

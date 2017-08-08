@@ -45,7 +45,7 @@ public class EntityZombieCurse extends EntityCurse
 	@Override
 	public void doTickSound()
 	{
-		this.playSound(SoundEvents.ENTITY_ZOMBIE_HURT, 0.75F, (this.rand.nextFloat() * 0.4F) + 0.8F); // "mob.zombiehurt"
+		this.playSound(SoundEvents.ENTITY_ZOMBIE_HURT, 0.75F, (this.rand.nextFloat() * 0.4F) + 0.8F);
 	}
 
 	@Override
