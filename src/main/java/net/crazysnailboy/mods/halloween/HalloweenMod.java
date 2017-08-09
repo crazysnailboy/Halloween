@@ -3,6 +3,7 @@ package net.crazysnailboy.mods.halloween;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.crazysnailboy.mods.halloween.command.CommandCurse;
+import net.crazysnailboy.mods.halloween.common.config.ModConfiguration;
 import net.crazysnailboy.mods.halloween.proxy.CommonProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -38,6 +39,7 @@ public class HalloweenMod
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		ModConfiguration.initializeConfiguration();
 		proxy.preInit();
 	}
 

@@ -1,6 +1,7 @@
 package net.crazysnailboy.mods.halloween.entity.effect;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.world.World;
 
@@ -23,9 +24,8 @@ public class EntitySlimeCurse extends EntityCurse
 	public void performCurse()
 	{
 		super.performCurse();
-		this.lift = 8;
-//		if (this.lifetime > 0 && this.victim != null && this.victim instanceof EntityPlayer)
-//		{
+		if (this.lifetime > 0 && this.victim != null && this.victim instanceof EntityPlayer)
+		{
 //			EntityPlayer player = (EntityPlayer)this.victim;
 //
 //			ItemStack stack = new ItemStack(Items.SLIME_BALL, 16 + this.rand.nextInt(17), 0);
@@ -36,7 +36,7 @@ public class EntitySlimeCurse extends EntityCurse
 //				ForgeEventFactory.onItemPickup(entityItem, player, stack);
 //				player.playSound(SoundEvents.ENTITY_SLIME_ATTACK, 0.75F, (this.rand.nextFloat() * 0.2F) + 0.9F); // "mob.slimeattack"
 //			}
-//		}
+		}
 	}
 
 	@Override

@@ -29,18 +29,18 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 
 /**
- * Originally adapted from {@link net.minecraft.entity.monster.EntityBlaze}.
+ * Mostly adapted from {@link net.minecraft.entity.monster.EntityBlaze}.
  *
  */
 public class EntityHaunter extends EntityMob
 {
 
-	private float heightOffset = 0.5F;
-	private int heightOffsetUpdateTime;
-
 	private static final DataParameter<Float> OPACITY = EntityDataManager.<Float>createKey(EntityHaunter.class, DataSerializers.FLOAT);
 	private static final DataParameter<Integer> CYCLE_VISIBILITY = EntityDataManager.<Integer>createKey(EntityHaunter.class, DataSerializers.VARINT);
 	private static final DataParameter<EnumTransparencyState> TRANSPARENCY_STATE = EntityDataManager.<EnumTransparencyState>createKey(EntityHaunter.class, ModDataSerializers.HAUNTER_TRANSPARENCY);
+
+	private float heightOffset = 0.5F;
+	private int heightOffsetUpdateTime;
 
 
 	public EntityHaunter(World worldIn)
@@ -208,6 +208,12 @@ public class EntityHaunter extends EntityMob
 	protected boolean isValidLightLevel()
 	{
 		return true;
+	}
+
+	@Override
+	public int getMaxSpawnedInChunk()
+	{
+		return 1;
 	}
 
 	/**

@@ -1,7 +1,10 @@
 package net.crazysnailboy.mods.halloween.entity.monster;
 
+import java.util.List;
 import javax.annotation.Nullable;
+import com.google.common.base.Predicate;
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
+import net.crazysnailboy.mods.halloween.util.BlockUtils;
 import net.crazysnailboy.mods.halloween.util.EntityUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -22,7 +25,7 @@ import net.minecraft.world.World;
 public class EntityZombieHands extends EntityZombie
 {
 
-	private int jackson;
+	private int jackson, entCount;
 	private boolean hideWithMe;
 
 
@@ -36,53 +39,6 @@ public class EntityZombieHands extends EntityZombie
 
 
 	@Override
-	protected SoundEvent getDeathSound()
-	{
-		return null;
-	}
-
-	@Override
-	protected ResourceLocation getLootTable()
-	{
-		return ModLootTables.ENTITIES_HALLOWMOB;
-	}
-
-//	@Override
-//	public void jump()
-//	{
-//		if (this.getAttackTarget() != null && this.isCollidedHorizontally)
-//		{
-//			this.jackson += 2;
-//			if (this.jackson >= 25)
-//			{
-//				EntityZombie zombie = this.unearthMe();
-//				zombie.motionY = 0.5D;
-//			}
-//		}
-//	}
-
-//	@Override
-//	public boolean getCanSpawnHere()
-//	{
-//		if (super.getCanSpawnHere())
-//		{
-//			BlockPos pos = new BlockPos(this.posX, this.getEntityBoundingBox().minY, this.posZ);
-//			if (this.world.getLight(pos) > 0 && BlockUtils.isSoftGround(this.world, pos.down()))
-//			{
-//				this.hideWithMe = true;
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-
-	@Override
-	public void onUpdate()
-	{
-		super.onUpdate();
-	}
-
-	@Override
 	public void onLivingUpdate()
 	{
 		if (!this.world.isRemote)
@@ -90,7 +46,6 @@ public class EntityZombieHands extends EntityZombie
 			if (this.jackson > 0)
 			{
 				this.jackson--;
-				System.out.println("EntityZombieHands#onLivingUpdate :: { jackson=" + jackson + " }");
 			}
 
 			if (!this.isDead && this.getHealth() > 0)
@@ -142,11 +97,43 @@ public class EntityZombieHands extends EntityZombie
 				}
 			}
 		}
+
+
+		if (hideWithMe && this.getAttackTarget() == null)
+		{
+			entCount++;
+			if (entCount >= 64)
+			{
+				entCount = rand.nextInt(8);
+
+				List<EntityZombie> entities = this.world.getEntitiesWithinAABB(EntityZombie.class, this.getEntityBoundingBox().expand(16.0D, 16.0D, 16.0D), new Predicate<EntityZombie>()
+				{
+					@Override
+					public boolean apply(@Nullable EntityZombie entity)
+					{
+						return (entity != EntityZombieHands.this && !(entity instanceof EntityZombieHands));
+					}
+				});
+
+				for ( EntityZombie entity : entities )
+				{
+					if (entity.getAttackTarget() == null && entity.onGround && entity.getRidingEntity() == null && !entity.isBeingRidden() && !entity.handleWaterMovement())
+					{
+						if (this.world.getLight(entity.getPosition()) != 0 && BlockUtils.isSoftGround(world, entity.getPosition().down()))
+						{
+							entity = earthMe(entity);
+						}
+					}
+				}
+			}
+		}
+
+
 		super.onLivingUpdate();
 	}
 
 	/**
-	 * Gives armor or weapon for entity based on given DifficultyInstance
+	 * Overriden so that ZombieHands don't spawn with equipment
 	 */
 	@Override
 	protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty)
@@ -179,6 +166,53 @@ public class EntityZombieHands extends EntityZombie
 		return livingdata;
 	}
 
+	@Override
+	public int getMaxSpawnedInChunk()
+	{
+		return 6;
+	}
+
+	@Override
+	protected SoundEvent getDeathSound()
+	{
+		return null;
+	}
+
+	@Override
+	protected ResourceLocation getLootTable()
+	{
+		return ModLootTables.ENTITIES_HALLOWMOB;
+	}
+
+//	@Override
+//	public void jump()
+//	{
+//		if (this.getAttackTarget() != null && this.isCollidedHorizontally)
+//		{
+//			this.jackson += 2;
+//			if (this.jackson >= 25)
+//			{
+//				EntityZombie zombie = this.unearthMe();
+//				zombie.motionY = 0.5D;
+//			}
+//		}
+//	}
+
+	@Override
+	public boolean getCanSpawnHere()
+	{
+		if (super.getCanSpawnHere())
+		{
+			BlockPos pos = new BlockPos(this.posX, this.posY, this.posZ);
+			if (this.world.getLight(pos) > 0 && BlockUtils.isSoftGround(this.world, pos.down()))
+			{
+				this.hideWithMe = true;
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 	private EntityZombie unearthMe()
 	{
@@ -186,14 +220,15 @@ public class EntityZombieHands extends EntityZombie
 		zombie.renderYawOffset = this.renderYawOffset;
 		zombie.prevRotationPitch = zombie.rotationPitch = this.rotationPitch;
 		zombie.prevRotationYaw = zombie.rotationYaw = this.rotationYaw;
-		zombie.setPosition(this.posX, this.posY - 0.75D, this.posZ);
+		zombie.setPosition(this.posX, this.posY, this.posZ);
 		zombie.setHealth(this.getHealth());
 		zombie.setFire(EntityUtils.getFire(this));
 		zombie.setAttackTarget(this.getAttackTarget());
 
-		this.world.spawnEntity(zombie);
-		this.setDead();
 		this.springEffect();
+		this.setDead();
+
+		this.world.spawnEntity(zombie);
 		return zombie;
 	}
 
@@ -208,16 +243,17 @@ public class EntityZombieHands extends EntityZombie
 		entity.setFire(EntityUtils.getFire(zombie));
 		entity.setAttackTarget(zombie.getAttackTarget());
 
-		this.world.spawnEntity(entity);
 		zombie.setDead();
 		entity.springEffect();
+
+		this.world.spawnEntity(entity);
 		return entity;
 	}
 
 
 	private void springEffect()
 	{
-		BlockPos pos = this.getPosition(); // BlockPos pos = new BlockPos(Math.floor(this.posX), Math.floor(this.getEntityBoundingBox().minY), Math.floor(this.posZ));
+		BlockPos pos = this.getPosition();
 		IBlockState state = this.world.getBlockState(pos.down());
 
 		if (!(state.getBlock() instanceof BlockAir))

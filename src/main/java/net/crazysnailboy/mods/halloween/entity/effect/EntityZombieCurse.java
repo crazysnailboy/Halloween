@@ -39,7 +39,6 @@ public class EntityZombieCurse extends EntityCurse
 	public void performCurse()
 	{
 		super.performCurse();
-		this.dash = 8;
 	}
 
 	@Override

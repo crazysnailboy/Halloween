@@ -197,14 +197,10 @@ public class EntityCreeperween extends EntityMob
 		return null;
 	}
 
-	public int getCreeperState()
+	@Override
+	public int getMaxSpawnedInChunk()
 	{
-		return this.dataManager.get(STATE).intValue();
-	}
-
-	public void setCreeperState(int state)
-	{
-		this.dataManager.set(STATE, state);
+		return 2;
 	}
 
 	@Override
@@ -223,6 +219,16 @@ public class EntityCreeperween extends EntityMob
 			}
 		}
 		return super.processInteract(player, hand, stack);
+	}
+
+	public int getCreeperState()
+	{
+		return this.dataManager.get(STATE).intValue();
+	}
+
+	public void setCreeperState(int state)
+	{
+		this.dataManager.set(STATE, state);
 	}
 
 	/**
