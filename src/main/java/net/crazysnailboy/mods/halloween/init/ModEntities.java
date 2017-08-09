@@ -93,10 +93,10 @@ public class ModEntities
 
 		EntityRegistry.addSpawn(EntityJumpkin.class, 100, 4, 4, EnumCreatureType.MONSTER, biomes);
 		EntityRegistry.addSpawn(EntityZombieHands.class, 100, 4, 4, EnumCreatureType.MONSTER, biomes);
-		EntityRegistry.addSpawn(EntityHallowitch.class, 100, 4, 4, EnumCreatureType.MONSTER, biomes);
-		EntityRegistry.addSpawn(EntityCreeperween.class, 100, 4, 4, EnumCreatureType.MONSTER, biomes);
-		EntityRegistry.addSpawn(EntityHaunter.class, 10, 4, 4, EnumCreatureType.MONSTER, biomes);
-		EntityRegistry.addSpawn(EntityTreater.class, 100, 4, 4, EnumCreatureType.MONSTER, biomes);
+		EntityRegistry.addSpawn(EntityHallowitch.class, 75, 4, 4, EnumCreatureType.MONSTER, biomes);
+		EntityRegistry.addSpawn(EntityCreeperween.class, 75, 4, 4, EnumCreatureType.MONSTER, biomes);
+		EntityRegistry.addSpawn(EntityHaunter.class, 10, 1, 1, EnumCreatureType.MONSTER, biomes);
+		EntityRegistry.addSpawn(EntityTreater.class, 50, 4, 4, EnumCreatureType.MONSTER, biomes);
 
 //		copySpawns(EntityCreeperween.class, EnumCreatureType.MONSTER, EntityCreeper.class, EnumCreatureType.MONSTER);
 //		copySpawns(EntityJumpkin.class, EnumCreatureType.MONSTER, EntityCreeper.class, EnumCreatureType.MONSTER);
@@ -112,10 +112,6 @@ public class ModEntities
 	private static void registerEntity(Class<? extends Entity> entityClass, String entityName, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
 	{
 		EntityRegistry.registerModEntity(new ResourceLocation(HalloweenMod.MODID, entityName), entityClass, entityName, id++, HalloweenMod.instance, trackingRange, updateFrequency, sendsVelocityUpdates);
-//		if (entityClass.isAssignableFrom(EntityLivingBase.class))
-//		{
-//	        EntityRegistry.registerEgg(entityClass, eggPrimary, eggSecondary);
-//		}
 	}
 
 	private static void registerEntity(Class<? extends Entity> entityClass, String entityName, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates, int eggPrimary, int eggSecondary)

@@ -9,6 +9,7 @@ import net.crazysnailboy.mods.halloween.util.ReflectionUtils;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIFindEntityNearest;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.monster.EntitySlime;
@@ -27,54 +28,18 @@ import net.minecraft.world.World;
 public class EntityJumpkin extends EntitySlime
 {
 
-	private boolean alreadySpawned;
-
 	private static final DataParameter<Boolean> LIT = EntityDataManager.<Boolean>createKey(EntityJumpkin.class, DataSerializers.BOOLEAN);
+
+	private boolean spawned;
+	private boolean awakened;
 
 
 	public EntityJumpkin(World world)
 	{
 		super(world);
 		this.setSlimeSize(2, true);
+		this.alignToBlocks();
 		this.isImmuneToFire = true;
-	}
-
-
-	@Override
-	protected void initEntityAI()
-    {
-    	super.initEntityAI();
-
-    	this.removeUnneededAITasks();
-
-        this.tasks.addTask(3, new EntityAIJumpkin.FaceRandom(this));
-		this.tasks.addTask(5, new EntityAIJumpkin.Hop(this));
-    }
-
-	private void removeUnneededAITasks()
-	{
-		final Class AISlimeHop = ReflectionUtils.getClass("net.minecraft.entity.monster.EntitySlime$AISlimeHop");
-		final Class AISlimeFaceRandom = ReflectionUtils.getClass("net.minecraft.entity.monster.EntitySlime$AISlimeFaceRandom");
-
-    	Iterator<EntityAITasks.EntityAITaskEntry> iterator = this.tasks.taskEntries.iterator();
-        while (iterator.hasNext())
-        {
-            EntityAITasks.EntityAITaskEntry taskEntry = iterator.next();
-            if (AISlimeHop.isInstance(taskEntry.action) || AISlimeFaceRandom.isInstance(taskEntry.action))
-            {
-            	iterator.remove();
-            }
-        }
-
-        iterator = this.targetTasks.taskEntries.iterator();
-        while (iterator.hasNext())
-        {
-            EntityAITasks.EntityAITaskEntry taskEntry = iterator.next();
-            if (taskEntry.action instanceof EntityAIFindEntityNearest)
-            {
-            	iterator.remove();
-            }
-        }
 	}
 
 
@@ -85,39 +50,31 @@ public class EntityJumpkin extends EntitySlime
 		this.dataManager.register(LIT, false);
 	}
 
-
-	public boolean getLit()
-	{
-		return this.dataManager.get(LIT).booleanValue();
-	}
-
-	public void setLit(boolean value)
-	{
-		this.dataManager.set(LIT, value);
-	}
-
-
+	/**
+	 * Overridden to call {@link EntitySlime#setSlimeSize(int)} to force all Jumpkins to size 2.
+	 */
 	@Override
-	protected EnumParticleTypes getParticleType()
+	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
 	{
-		return EnumParticleTypes.FLAME;
-	}
-
-	@Override
-	public void writeEntityToNBT(NBTTagCompound compound)
-	{
-		super.writeEntityToNBT(compound);
-		compound.setBoolean("AlreadySpawned", this.alreadySpawned);
-		compound.setBoolean("Lit", this.getLit());
-	}
-
-	@Override
-	public void readEntityFromNBT(NBTTagCompound compound)
-	{
-		super.readEntityFromNBT(compound);
-		this.setLit(compound.getBoolean("Lit"));
-		this.alreadySpawned = compound.getBoolean("AlreadySpawned");
+		super.onInitialSpawn(difficulty, livingdata);
 		this.setSlimeSize(2, true);
+		return livingdata;
+	}
+
+	@Override
+	protected void initEntityAI()
+    {
+    	super.initEntityAI();
+    	this.removeUnneededAITasks();
+        this.tasks.addTask(3, new EntityAIJumpkin.FaceRandom(this));
+		this.tasks.addTask(5, new EntityAIJumpkin.Hop(this));
+    }
+
+	@Override
+	protected void applyEntityAttributes()
+	{
+		super.applyEntityAttributes();
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(this.awakened ? 16.0D : 4.0D);
 	}
 
 	@Override
@@ -126,16 +83,10 @@ public class EntityJumpkin extends EntitySlime
 		if (!this.world.isRemote)
 		{
 			// ensure that jumpkins spawn aligned as blocks
-			if (!this.alreadySpawned)
+			if (!this.spawned)
 			{
-				this.rotationPitch = 0.0F;
-				this.prevRotationYaw = this.rotationYaw = (float)this.rand.nextInt(4) * 90.0F;
-				this.renderYawOffset = this.rotationYaw;
-				this.posX = Math.floor(this.posX) + 0.5D;
-				this.posZ = Math.floor(this.posZ) + 0.5D;
-				this.setPosition(this.posX, this.posY, this.posZ);
-				this.alreadySpawned = true;
-				this.motionX = this.motionY = this.motionZ = 0.0D;
+				this.alignToBlocks();
+				this.spawned = true;
 			}
 			// if it's daytime, jumpkins have a chance to turn into pumpkins
 			if (this.world.isDaytime())
@@ -156,8 +107,31 @@ public class EntityJumpkin extends EntitySlime
 		super.onLivingUpdate();
 	}
 
+	@Override
+	public void writeEntityToNBT(NBTTagCompound compound)
+	{
+		super.writeEntityToNBT(compound);
+		compound.setBoolean("Spawned", this.spawned);
+		compound.setBoolean("Awakened", this.awakened);
+		compound.setBoolean("Lit", this.getLit());
+	}
 
+	@Override
+	public void readEntityFromNBT(NBTTagCompound compound)
+	{
+		super.readEntityFromNBT(compound);
+		this.setLit(compound.getBoolean("Lit"));
+		this.spawned = compound.getBoolean("Spawned");
+		this.awakened = compound.getBoolean("Awakened");
+		this.setSlimeSize(2, true);
+		this.alignToBlocks();
+	}
 
+	@Override
+	protected EnumParticleTypes getParticleType()
+	{
+		return EnumParticleTypes.FLAME;
+	}
 
 //	@Override
 //	protected SoundEvent getHurtSound()
@@ -182,7 +156,6 @@ public class EntityJumpkin extends EntitySlime
 //	{
 //		return SoundEvents.BLOCK_WOOD_STEP;
 //	}
-
 
 	/**
 	 * Overridden to prevent Jumpkins from dropping Slime Balls
@@ -223,15 +196,85 @@ public class EntityJumpkin extends EntitySlime
 		this.isDead = true;
 	}
 
-	/**
-	 * Overridden to call {@link EntitySlime#setSlimeSize(int)} to force all Jumpkins to size 2.
-	 */
 	@Override
-	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
+	public int getMaxSpawnedInChunk()
 	{
-		super.onInitialSpawn(difficulty, livingdata);
-		this.setSlimeSize(2, true);
-		return livingdata;
+		return 16;
+	}
+
+
+	public boolean getLit()
+	{
+		return this.dataManager.get(LIT).booleanValue();
+	}
+
+	public void setLit(boolean value)
+	{
+		this.dataManager.set(LIT, value);
+	}
+
+	public boolean getAwakened()
+	{
+		return this.awakened;
+	}
+
+	public void setAwakened(boolean value)
+	{
+		this.awakened = value;
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(this.awakened ? 16.0D : 4.0D);
+	}
+
+
+	private void removeUnneededAITasks()
+	{
+		final Class AISlimeHop = ReflectionUtils.getClass("net.minecraft.entity.monster.EntitySlime$AISlimeHop");
+		final Class AISlimeFaceRandom = ReflectionUtils.getClass("net.minecraft.entity.monster.EntitySlime$AISlimeFaceRandom");
+
+    	Iterator<EntityAITasks.EntityAITaskEntry> iterator = this.tasks.taskEntries.iterator();
+        while (iterator.hasNext())
+        {
+            EntityAITasks.EntityAITaskEntry taskEntry = iterator.next();
+            if (AISlimeHop.isInstance(taskEntry.action) || AISlimeFaceRandom.isInstance(taskEntry.action))
+            {
+            	iterator.remove();
+            }
+        }
+
+        iterator = this.targetTasks.taskEntries.iterator();
+        while (iterator.hasNext())
+        {
+            EntityAITasks.EntityAITaskEntry taskEntry = iterator.next();
+            if (taskEntry.action instanceof EntityAIFindEntityNearest)
+            {
+            	iterator.remove();
+            }
+        }
+	}
+
+	private void alignToBlocks()
+	{
+		this.rotationPitch = 0.0F;
+		this.prevRotationYaw = this.rotationYaw = (float)this.rand.nextInt(4) * 90.0F;
+		this.renderYawOffset = this.rotationYaw;
+		this.posX = Math.floor(this.posX) + 0.5D;
+		this.posZ = Math.floor(this.posZ) + 0.5D;
+		this.setPosition(this.posX, this.posY, this.posZ);
+		this.motionX = this.motionY = this.motionZ = 0.0D;
+
+//		this.rotationPitch = 0.0F;
+//		this.prevRotationYaw = this.rotationYaw = (this.spawned ? (Math.round(this.rotationYaw / 90.0F) * 90.0F) : ((float)this.rand.nextInt(4) * 90.0F));
+//		this.renderYawOffset = this.rotationYaw;
+//		this.rotationYawHead = this.rotationYaw;
+//
+//		this.posX = Math.floor(this.posX) + 0.5D;
+//		this.posZ = Math.floor(this.posZ) + 0.5D;
+//
+//		this.setRotation(this.rotationYaw, this.rotationPitch);
+//		this.setPosition(this.posX, this.posY, this.posZ);
+//
+//		this.motionX = this.motionY = this.motionZ = 0.0D;
+//
+//		System.out.println("{ posX=" + this.posX + ", posY=" + this.posY + ", posZ=" + this.posZ + ", pitch=" + this.rotationPitch + ", yaw=" + this.rotationYaw + " }");
 	}
 
 }

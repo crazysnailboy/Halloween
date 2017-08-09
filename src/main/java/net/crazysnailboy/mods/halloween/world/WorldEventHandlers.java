@@ -1,6 +1,7 @@
 package net.crazysnailboy.mods.halloween.world;
 
 import java.util.Random;
+import net.crazysnailboy.mods.halloween.common.config.ModConfiguration;
 import net.crazysnailboy.mods.halloween.init.ModSoundEvents;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -20,20 +21,20 @@ public class WorldEventHandlers
 {
 
 	private static final Random rand = new Random();
-	private static int ambienceTicks = 900 + rand.nextInt(150);
+	private static int ambientSoundInterval = ModConfiguration.ambientSoundInterval + rand.nextInt(150);
 
 
 	@SubscribeEvent
 	public static void onWorldTick(WorldTickEvent event)
 	{
-		if (event.side == Side.SERVER && event.phase == Phase.END && !(event.world instanceof WorldServerMulti))
+		if (ModConfiguration.ambientSoundsEnabled && event.side == Side.SERVER && event.phase == Phase.END && !(event.world instanceof WorldServerMulti))
 		{
 			World world = event.world;
 			if (!world.isDaytime())
 			{
-				if (ambienceTicks > 0)
+				if (ambientSoundInterval > 0)
 				{
-					ambienceTicks--;
+					ambientSoundInterval--;
 					return;
 				}
 
@@ -57,7 +58,7 @@ public class WorldEventHandlers
 					world.playSound(null, player.getPosition(), SoundEvents.AMBIENT_CAVE, SoundCategory.AMBIENT, 4.0F, 1.0F);
 				}
 
-				ambienceTicks = 900 + rand.nextInt(150);
+				ambientSoundInterval = ModConfiguration.ambientSoundInterval + rand.nextInt(150);
 
 			}
 		}

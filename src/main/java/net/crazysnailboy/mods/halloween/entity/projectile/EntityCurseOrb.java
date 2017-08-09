@@ -45,20 +45,20 @@ public class EntityCurseOrb extends EntityThrowable
 	{
 		if (!this.world.isRemote)
 		{
-			if (result.entityHit != null && result.entityHit instanceof EntityPlayer)
+			if (result.entityHit != null && result.entityHit instanceof EntityLivingBase)
 			{
-				EntityPlayer player = (EntityPlayer)result.entityHit;
+				EntityLivingBase victim = (EntityLivingBase)result.entityHit;
 				EntityCurse curse = null;
 
 				EnumCurseType curseType = EnumCurseType.getRandom();
 				switch (curseType)
 				{
-					case CREEPER: curse = new EntityCreeperCurse(this.world, player); break;
-					case GHAST: curse = new EntityGhastCurse(this.world, player); break;
-					case SKELETON: curse = new EntitySkeletonCurse(this.world, player); break;
-					case SLIME: curse = new EntitySlimeCurse(this.world, player); break;
-					case SPIDER: curse = new EntitySpiderCurse(this.world, player); break;
-					case ZOMBIE: curse = new EntityZombieCurse(this.world, player); break;
+					case CREEPER: curse = new EntityCreeperCurse(this.world, victim); break;
+					case GHAST: curse = new EntityGhastCurse(this.world, victim); break;
+					case SKELETON: curse = new EntitySkeletonCurse(this.world, victim); break;
+					case SLIME: curse = new EntitySlimeCurse(this.world, victim); break;
+					case SPIDER: curse = new EntitySpiderCurse(this.world, victim); break;
+					case ZOMBIE: curse = new EntityZombieCurse(this.world, victim); break;
 				}
 				this.world.spawnEntity(curse);
 

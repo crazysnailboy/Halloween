@@ -3,6 +3,7 @@ package net.crazysnailboy.mods.halloween.entity.effect;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import net.crazysnailboy.mods.halloween.util.WorldUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +13,24 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 
+/**
+ * Revival Mode
+ *   Creeper Curse: If you swing your weapon too often, the creepers circling around your head will explode.
+ *   Ghast Curse: Monsters within 50 blocks of you will gradually walk towards your position.
+ *   Skeleton Curse: Your health will be in a constant state of flux, it's like health roulette.
+ *   Slime Curse:
+ *   Spider Curse: Your character will constantly be bumped around the screen.
+ *   Zombie Curse:
+ *
+ * Legacy Mode:
+ *   Creeper Curse:
+ *   Ghast Curse:
+ *   Skeleton Curse:
+ *   Slime Curse: Your inventory will be constantly flooded with slime balls.
+ *   Spider Curse:
+ *   Zombie Curse: You will be slowed down, and your jump height will be decreased.
+ *
+ */
 public abstract class EntityCurse extends Entity
 {
 
@@ -75,13 +94,13 @@ public abstract class EntityCurse extends Entity
 		// if this curse doesn't have a victim...
 		if (this.victim == null)
 		{
-			// search for players in the vicinity
-			EntityPlayer player = this.world.getClosestPlayerToEntity(this, 2.0D);
+			// get the closest living entity in the vicinity
+			EntityLivingBase entity = WorldUtils.getClosestEntity(this.world, EntityLivingBase.class, this.getPosition(), 2.0D);
 
 			// if we've found one, it will become the victim of this curse
-			if (player != null && !player.isDead && player.getHealth() > 0.0F)
+			if (entity != null && !entity.isDead && entity.getHealth() > 0.0F)
 			{
-				this.victim = player;
+				this.victim = entity;
 			}
 			// otherwise, kill this curse
 			else
@@ -125,7 +144,10 @@ public abstract class EntityCurse extends Entity
 
 		// decrement the lifetime counter, and kill this curse when the counter gets to zero
 		this.lifetime--;
-		if (this.lifetime <= 0) this.setDead();
+		if (this.lifetime <= 0)
+		{
+			this.setDead();
+		}
 	}
 
 	@Override
@@ -136,7 +158,8 @@ public abstract class EntityCurse extends Entity
 		String s = compound.getString("VictimUUID");
 		if (!s.isEmpty())
 		{
-			this.victim = this.world.getPlayerEntityByUUID(UUID.fromString(s));
+			this.victim = WorldUtils.getEntityByUUID(this.world, EntityLivingBase.class, UUID.fromString(s));
+//			this.victim = this.world.getPlayerEntityByUUID(UUID.fromString(s));
 		}
 	}
 
@@ -162,6 +185,9 @@ public abstract class EntityCurse extends Entity
 
 	public void performCurse()
 	{
+		this.dash = 8;
+		this.swell = 8;
+		this.lift = 2;
 		this.doTickSound();
 	}
 
