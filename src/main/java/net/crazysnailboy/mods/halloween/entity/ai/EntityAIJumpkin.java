@@ -3,6 +3,7 @@ package net.crazysnailboy.mods.halloween.entity.ai;
 import java.lang.reflect.Method;
 import net.crazysnailboy.mods.halloween.entity.monster.EntityJumpkin;
 import net.crazysnailboy.mods.halloween.util.ReflectionUtils;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -43,13 +44,18 @@ public class EntityAIJumpkin
 		@Override
 		public boolean shouldExecute()
 		{
-			EntityPlayer player = this.entity.world.getClosestPlayerToEntity(this.entity, 4.0D);
-			return player != null && this.entity.getAttackTarget() == null && (this.entity.onGround || this.entity.isInWater() || this.entity.isInLava() || this.entity.isPotionActive(MobEffects.LEVITATION));
+			double followRange = this.entity.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
+			EntityPlayer player = this.entity.world.getClosestPlayerToEntity(this.entity, followRange);
+
+			boolean shouldExecute = (player != null && this.entity.getAttackTarget() == null && (this.entity.onGround || this.entity.isInWater() || this.entity.isInLava() || this.entity.isPotionActive(MobEffects.LEVITATION)));
+			if (!shouldExecute) this.entity.setLit(false);
+			return shouldExecute;
 		}
 
 		@Override
 		public void startExecuting()
 		{
+			if (!this.entity.getAwakened()) this.entity.setAwakened(true);
 			this.entity.setLit(true);
 		}
 
@@ -73,6 +79,7 @@ public class EntityAIJumpkin
 
 	}
 
+
 	/**
 	 * Modified version of {@link net.minecraft.entity.monster.EntitySlime$AISlimeHop}
 	 */
@@ -93,8 +100,19 @@ public class EntityAIJumpkin
 		@Override
 		public boolean shouldExecute()
 		{
-			EntityPlayer player = this.entity.world.getClosestPlayerToEntity(this.entity, 4.0D);
-			return (player != null);
+			double followRange = this.entity.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
+			EntityPlayer player = this.entity.world.getClosestPlayerToEntity(this.entity, followRange);
+
+			boolean shouldExecute = (player != null);
+			if (!shouldExecute) this.entity.setLit(false);
+			return shouldExecute;
+		}
+
+		@Override
+		public void startExecuting()
+		{
+			if (!this.entity.getAwakened()) this.entity.setAwakened(true);
+			this.entity.setLit(true);
 		}
 
 		@Override
@@ -102,10 +120,7 @@ public class EntityAIJumpkin
 		{
 //			int posX = this.entity.getPosition().getX();
 //			int posZ = this.entity.getPosition().getZ();
-//
 //			this.entity.setPositionAndUpdate(posX, this.entity.posY, posZ);
-
-
 //			this.entity.setPositionAndUpdate(((long)this.entity.posX) + 0.5D, this.entity.posY, ((long)this.entity.posZ) + 0.5D);
 		}
 

@@ -23,7 +23,6 @@ public class EntityZombieCurse extends EntityCurse
 	public void onUpdate()
 	{
 		super.onUpdate();
-
 		if (this.lifetime > 0 && this.victim != null)
 		{
 			this.victim.motionX *= 0.625D;
@@ -40,7 +39,6 @@ public class EntityZombieCurse extends EntityCurse
 	public void performCurse()
 	{
 		super.performCurse();
-		this.dash = 8;
 	}
 
 	@Override

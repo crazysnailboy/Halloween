@@ -23,7 +23,6 @@ public class EntitySpiderCurse extends EntityCurse
 	public void performCurse()
 	{
 		super.performCurse();
-		this.lift = 8;
 		if (this.lifetime > 0 && this.victim != null)
 		{
 			this.victim.motionY += 0.3D;
