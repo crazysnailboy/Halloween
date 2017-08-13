@@ -23,13 +23,12 @@ public class ItemMegaCandy extends ItemFood
 	{
 		player.heal(5.0F);
 
-		List<EntityCurse> entitiesCurse = world.getEntitiesWithinAABB(EntityCurse.class, player.getEntityBoundingBox().expand(4D, 4D, 4D));
-		for (EntityCurse entityCurse : entitiesCurse)
+		List<EntityCurse> entities = world.getEntitiesWithinAABB(EntityCurse.class, player.getEntityBoundingBox().grow(4.0D, 4.0D, 4.0D));
+		for (EntityCurse entity : entities)
 		{
-			if (entityCurse.victim == player)
+			if (entity.victim == player)
 			{
-				entityCurse.victim = null;
-				entityCurse.setDead();
+				entity.setDead();
 			}
 		}
 	}

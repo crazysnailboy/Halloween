@@ -21,7 +21,7 @@ public class WorldEventHandlers
 {
 
 	private static final Random rand = new Random();
-	private static int ambientSoundInterval = ModConfiguration.ambientSoundInterval + rand.nextInt(150);
+	private static int ambientSoundInterval = getAmbientSoundInterval();
 
 
 	@SubscribeEvent
@@ -58,10 +58,14 @@ public class WorldEventHandlers
 					world.playSound(null, player.getPosition(), SoundEvents.AMBIENT_CAVE, SoundCategory.AMBIENT, 4.0F, 1.0F);
 				}
 
-				ambientSoundInterval = ModConfiguration.ambientSoundInterval + rand.nextInt(150);
-
+				ambientSoundInterval = getAmbientSoundInterval();
 			}
 		}
+	}
+
+	private static int getAmbientSoundInterval()
+	{
+		return ModConfiguration.ambientSoundInterval + rand.nextInt(ModConfiguration.ambientSoundInterval / 4);
 	}
 
 }

@@ -9,6 +9,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
@@ -16,23 +19,25 @@ import net.minecraft.world.World;
 /**
  * Revival Mode
  *   Creeper Curse: If you swing your weapon too often, the creepers circling around your head will explode.
- *   Ghast Curse: Monsters within 50 blocks of you will gradually walk towards your position.
- *   Skeleton Curse: Your health will be in a constant state of flux, it's like health roulette.
- *   Slime Curse:
+ *   Ghast Curse:  Monsters within 50 blocks of you will gradually walk towards your position.
+ *   Skeleton Curse: Your health will be in a constant state of flux.
+ *   Slime Curse: You will be slowed down, and your jump height will be increased.
  *   Spider Curse: Your character will constantly be bumped around the screen.
- *   Zombie Curse:
+ *   Zombie Curse: Your inventory will be constantly flooded with poisionous potatoes.
  *
  * Legacy Mode:
- *   Creeper Curse:
- *   Ghast Curse:
- *   Skeleton Curse:
+ *   Creeper Curse: If you swing your weapon too often, the creepers circling around your head will explode.
+ *   Ghast Curse:  Monsters within 50 blocks of you will gradually walk towards your position.
+ *   Skeleton Curse: Your health will be in a constant state of flux.
  *   Slime Curse: Your inventory will be constantly flooded with slime balls.
- *   Spider Curse:
+ *   Spider Curse: Your character will constantly be bumped around the screen.
  *   Zombie Curse: You will be slowed down, and your jump height will be decreased.
  *
  */
 public abstract class EntityCurse extends Entity
 {
+
+	private static final DataParameter<Integer> VICTIM_ID = EntityDataManager.<Integer>createKey(EntityCurse.class, DataSerializers.VARINT);
 
 	public EntityLivingBase victim;
 	protected int lifetime;
@@ -61,6 +66,10 @@ public abstract class EntityCurse extends Entity
 		}
 		else
 		{
+			if (!this.world.isRemote)
+			{
+				this.dataManager.set(VICTIM_ID, (this.victim == null ? 0 : this.victim.getEntityId()));
+			}
 			if (this.victim instanceof EntityPlayer)
 			{
 				((EntityPlayer)this.victim).sendMessage(new TextComponentTranslation("chat.curse.struck", this.getCurseType().getDisplayName()));
@@ -71,66 +80,87 @@ public abstract class EntityCurse extends Entity
 
 
 	@Override
+	protected void entityInit()
+	{
+		this.dataManager.register(VICTIM_ID, 0);
+	}
+
+	@Override
 	public void onUpdate()
 	{
-		super.onUpdate();
-
-		// if this is a newly spawned curse (lifetime == 1200) with a victim...
-		if (this.lifetime == 1200 && this.victim != null)
+		if (!this.world.isRemote)
 		{
-			// search for other curses in the vicinity of this curse...
-			List<EntityCurse> entities = this.world.getEntitiesWithinAABB(EntityCurse.class, this.getEntityBoundingBox().expand(4.0D, 4.0D, 4.0D));
-			for ( EntityCurse entity : entities )
+			// if this curse has a victim...
+			if (this.victim != null)
 			{
-				if (entity != this && entity.victim == this.victim)
+				if (this.firstUpdate)
 				{
-					// ... and kill them
-					entity.victim = null;
-					entity.setDead();
+					// search for other curses in the vicinity of this curse
+					List<EntityCurse> entities = this.world.getEntitiesWithinAABB(EntityCurse.class, this.getEntityBoundingBox().grow(4.0D, 4.0D, 4.0D));
+					for ( EntityCurse entity : entities )
+					{
+						// if we've found other curses with the same victim as this curse...
+						if (entity != this && entity.victim == this.victim)
+						{
+							// ... kill the other curses
+							entity.victim = null;
+							entity.setDead();
+						}
+					}
+				}
+
+				// if our victim is dead
+				if (this.victim.getHealth() <= 0 || this.victim.isDead)
+				{
+					// kill this curse
+					this.setDead();
+				}
+			}
+
+			// if this curse doesn't have a victim...
+			if (this.victim == null)
+			{
+				// get the closest living entity in the vicinity
+				EntityLivingBase entity = WorldUtils.getClosestEntity(this.world, EntityLivingBase.class, this.getPosition(), 2.0D);
+
+				// if we've found one...
+				if (entity != null && !entity.isDead && entity.getHealth() > 0.0F)
+				{
+					// ... make it the victim of this curse
+					this.victim = entity;
+				}
+				// otherwise...
+				else
+				{
+					// ... kill this curse
+					this.setDead();
 				}
 			}
 		}
 
-		// if this curse doesn't have a victim...
-		if (this.victim == null)
+		// if the loop is running client-side and we don't yet have a victim...
+		if (this.world.isRemote && this.victim == null)
 		{
-			// get the closest living entity in the vicinity
-			EntityLivingBase entity = WorldUtils.getClosestEntity(this.world, EntityLivingBase.class, this.getPosition(), 2.0D);
-
-			// if we've found one, it will become the victim of this curse
-			if (entity != null && !entity.isDead && entity.getHealth() > 0.0F)
-			{
-				this.victim = entity;
-			}
-			// otherwise, kill this curse
-			else
-			{
-				this.setDead();
-			}
+			// attempt to get the victim by id from the data manager
+			this.victim = (EntityLivingBase)this.world.getEntityByID(this.dataManager.get(VICTIM_ID).intValue());
 		}
 
-		// if this curse isn't new, and has a victim...
-		else
+		// if this curse has a victim...
+		if (this.victim != null)
 		{
-			// if the victim is dead, kill this curse
-			if (this.victim.getHealth() <= 0 || this.victim.isDead)
-			{
-				this.setDead();
-			}
-			// otherwise
-			else
-			{
-				// ensure this curse continues to rotate around it's victim as it's victim moves
-				this.posX = this.victim.posX;
-				if (this.victim.prevPosY != this.victim.posY) this.posY = this.victim.posY + this.victim.getEyeHeight();
-				this.posZ = this.victim.posZ;
-				this.setPosition(this.posX, this.posY, this.posZ);
+			// ensure this curse continues to rotate around it's victim as it's victim moves
+			this.posX = this.victim.posX;
+			this.posY = this.victim.posY + this.victim.getEyeHeight();
+			this.posZ = this.victim.posZ;
+			this.setPosition(this.posX, this.posY, this.posZ);
+			this.motionX = this.victim.motionX;
+			this.motionY = this.victim.motionY;
+			this.motionZ = this.victim.motionZ;
 
-				// every 20 ticks, perform the curse effect
-				if ((this.lifetime - 1) % 20 == 0)
-				{
-					this.performCurse();
-				}
+			// every 20 ticks, perform the curse effect
+			if ((this.lifetime - 1) % 20 == 0)
+			{
+				this.performCurse();
 			}
 		}
 
@@ -144,22 +174,19 @@ public abstract class EntityCurse extends Entity
 
 		// decrement the lifetime counter, and kill this curse when the counter gets to zero
 		this.lifetime--;
-		if (this.lifetime <= 0)
-		{
-			this.setDead();
-		}
+		if (this.lifetime <= 0) this.setDead();
+
+		super.onUpdate();
 	}
 
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound compound)
 	{
 		this.lifetime = compound.getShort("Lifetime");
-
 		String s = compound.getString("VictimUUID");
 		if (!s.isEmpty())
 		{
 			this.victim = WorldUtils.getEntityByUUID(this.world, EntityLivingBase.class, UUID.fromString(s));
-//			this.victim = this.world.getPlayerEntityByUUID(UUID.fromString(s));
 		}
 	}
 
@@ -167,19 +194,17 @@ public abstract class EntityCurse extends Entity
 	protected void writeEntityToNBT(NBTTagCompound compound)
 	{
 		compound.setShort("Lifetime", (short)this.lifetime);
-
 		if (this.victim != null)
 		{
 			compound.setString("VictimUUID", this.victim.getUniqueID().toString());
 		}
 	}
 
-	/**
-	 * empty concrete implementation of {@link net.minecraft.entity.Entity#entityInit()}
-	 */
 	@Override
-	protected void entityInit()
+	public void setDead()
 	{
+		this.victim = null;
+		super.setDead();
 	}
 
 

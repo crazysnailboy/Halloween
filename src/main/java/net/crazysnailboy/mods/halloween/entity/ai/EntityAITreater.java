@@ -7,9 +7,7 @@ import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
 import net.crazysnailboy.mods.halloween.entity.passive.EntityTreater;
 import net.crazysnailboy.mods.halloween.entity.passive.EntityTreater.EnumTreaterMessage;
-import net.crazysnailboy.mods.halloween.init.ModItems;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -29,48 +27,23 @@ public class EntityAITreater
 {
 
 	/**
-	 * EntityTreater will move towards the nearest EntityItem containing an ItemStack of ModItems.CANDY or ModItems.MEGA_CANDY.
+	 * EntityTreater will move towards the nearest EntityItem containing an ItemStack of ModItems.MEGA_CANDY or ModItems.CANDY.
 	 * Derived from {@link net.minecraft.entity.ai.EntityAIFindEntityNearest}
 	 */
 	public static class MoveToNearestCandy extends EntityAIBase
 	{
 
 		private final EntityTreater taskOwner;
-		private final Predicate<EntityItem> predicate;
 		private final Sorter sorter;
 		private final double moveSpeed;
 		private EntityItem targetEntity;
+		private int runDelay;
 
 
 		public MoveToNearestCandy(EntityTreater taskOwner, double moveSpeed)
 		{
 			this.taskOwner = taskOwner;
 			this.moveSpeed = moveSpeed;
-
-			this.predicate = new Predicate<EntityItem>()
-			{
-				@Override
-				public boolean apply(@Nullable EntityItem entity)
-				{
-					double maxDistance = MoveToNearestCandy.this.getTargetDistance();
-
-					if (MoveToNearestCandy.this.taskOwner.getDistanceToEntity(entity) < maxDistance)
-					{
-						if (entity.getItem().getItem() == ModItems.CANDY)
-						{
-							if (entity.getItem().getMetadata() == MoveToNearestCandy.this.taskOwner.getTreaterType().getCandyType().getMetadata())
-							{
-								// TODO - the canEasilyReach method doesn't stop treaters from trying to reach entities they can't.
-								if (entity.onGround) // && EntityAIMoveToNearestCandy.this.canEasilyReach(entity))
-								{
-									return true;
-								}
-							}
-						}
-					}
-					return false;
-				}
-			};
 			this.sorter = new Sorter(taskOwner);
 			this.setMutexBits(1);
 		}
@@ -79,12 +52,19 @@ public class EntityAITreater
 		@Override
 		public boolean shouldExecute()
 		{
-			List<EntityItem> list = this.taskOwner.world.<EntityItem>getEntitiesWithinAABB(EntityItem.class, this.getTargetableArea(this.getTargetDistance()), this.predicate);
-			if (!list.isEmpty())
+			// wait a random amount of time before attempting to execute
+			if (this.runDelay > 0)
 			{
-				Collections.sort(list, this.sorter);
-				this.targetEntity = list.get(0);
-				return true;
+				--this.runDelay;
+				return false;
+			}
+			this.runDelay = 40 + this.taskOwner.getRNG().nextInt(20);
+
+			// only execute if mobGriefing is enabled...
+			if (this.taskOwner.world.getGameRules().getBoolean("mobGriefing"))
+			{
+				// and there's candy in the vicinity
+				return this.searchForDestination();
 			}
 			return false;
 		}
@@ -92,8 +72,8 @@ public class EntityAITreater
 		@Override
 		public void startExecuting()
 		{
-			// the tryMoveToEntityLiving method is misnamed - the target entity can be of any type and doesn't need to derive from EntityLivingBase.
-			this.taskOwner.getNavigator().tryMoveToEntityLiving(this.targetEntity, this.moveSpeed);
+			// attempt to move towards the candy
+			this.taskOwner.getNavigator().tryMoveToEntityLiving(this.targetEntity, this.moveSpeed); // the tryMoveToEntityLiving method is misnamed - the target entity can be of any type and doesn't need to derive from EntityLivingBase.
 			super.startExecuting();
 		}
 
@@ -101,26 +81,21 @@ public class EntityAITreater
 		public boolean shouldContinueExecuting()
 		{
 			EntityItem entity = this.targetEntity;
-			if (entity == null)
+
+			// don't execute if the target candy is no longer available
+			if (entity == null || entity.isDead)
 			{
 				return false;
 			}
-			else if (entity.isDead)
-			{
-				return false;
-			}
-			else
-			{
-				double targetDistance = this.getTargetDistance();
-				return (targetDistance < this.taskOwner.getDistanceToEntity(entity));
-			}
+
+			// only execute if the target candy is within the targetable area
+			return (this.getTargetDistance() < this.taskOwner.getDistanceToEntity(entity));
 		}
 
 		@Override
 		public void resetTask()
 		{
-			this.taskOwner.setAttackTarget((EntityLivingBase)null);
-			super.startExecuting();
+			super.resetTask();
 		}
 
 
@@ -132,9 +107,51 @@ public class EntityAITreater
 
 		private AxisAlignedBB getTargetableArea(double targetDistance)
 		{
-			return this.taskOwner.getEntityBoundingBox().expand(targetDistance, 4.0D, targetDistance);
+			return this.taskOwner.getEntityBoundingBox().grow(targetDistance, 4.0D, targetDistance);
 		}
 
+		/**
+		 * Attempt to find an EntityItem containing an ItemStack of ModItems.MEGA_CANDY or ModItems.CANDY which the Treater can pick up
+		 */
+		private boolean searchForDestination()
+		{
+			// search for candy items in the vicinity of the treater that the treater can pick up
+			List<EntityItem> list = this.taskOwner.world.<EntityItem>getEntitiesWithinAABB(EntityItem.class, this.getTargetableArea(this.getTargetDistance()), new Predicate<EntityItem>()
+			{
+				@Override
+				public boolean apply(@Nullable EntityItem entity)
+				{
+					double maxDistance = MoveToNearestCandy.this.getTargetDistance();
+					EntityTreater taskOwner = MoveToNearestCandy.this.taskOwner;
+
+					if (entity.onGround && taskOwner.canTreaterPickupItem(entity.getItem()))
+					{
+						if (taskOwner.getDistanceToEntity(entity) < maxDistance)
+						{
+							//return MoveToNearestCandy.this.canEasilyReach(entity); // TODO - the canEasilyReach method doesn't stop treaters from trying to reach entities they can't.
+							return true;
+						}
+					}
+					return false;
+				}
+			});
+
+			// if we've found any...
+			if (!list.isEmpty())
+			{
+				// select the closest one as the target and return true
+				Collections.sort(list, this.sorter);
+				this.targetEntity = list.get(0);
+				return true;
+			}
+			// otherwise
+			else
+			{
+				// clear the target and return false
+				this.targetEntity = null;
+				return false;
+			}
+		}
 
 		/**
 		 * Checks to see if this entity can find a short path to the given target.

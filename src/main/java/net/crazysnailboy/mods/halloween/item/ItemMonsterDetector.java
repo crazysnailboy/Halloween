@@ -44,7 +44,7 @@ public class ItemMonsterDetector extends Item
 			double distance = 100.0D;
 			boolean scary = false;
 
-			List<EntityMob> mobs = world.getEntitiesWithinAABB(EntityMob.class, player.getEntityBoundingBox().expand(32.0D, 32.0D, 32.0D));
+			List<EntityMob> mobs = world.getEntitiesWithinAABB(EntityMob.class, player.getEntityBoundingBox().grow(32.0D, 32.0D, 32.0D));
 			for (EntityMob mob : mobs)
 			{
 				double mobDistance = mob.getDistanceToEntity(player);

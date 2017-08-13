@@ -1,18 +1,19 @@
 {
 	"homepage": "https://github.com/crazysnailboy/Halloween/releases",
 	"promos": {
-		"1.12.1-latest": "0.1.5",
-		"1.12.1-recommended": "0.1.5",
-		"1.12-latest": "0.1.5",
-		"1.12-recommended": "0.1.5",
-		"1.11.2-latest": "0.1.5",
-		"1.11.2-recommended": "0.1.5",
-		"1.11-latest": "0.1.5",
-		"1.11-recommended": "0.1.5",
-		"1.10.2-latest": "0.1.5",
-		"1.10.2-recommended": "0.1.5"
+		"1.12.1-latest": "0.1.6",
+		"1.12.1-recommended": "0.1.6",
+		"1.12-latest": "0.1.6",
+		"1.12-recommended": "0.1.6",
+		"1.11.2-latest": "0.1.6",
+		"1.11.2-recommended": "0.1.6",
+		"1.11-latest": "0.1.6",
+		"1.11-recommended": "0.1.6",
+		"1.10.2-latest": "0.1.6",
+		"1.10.2-recommended": "0.1.6"
 	},
 	"1.12.1": {
+		"0.1.6": "more changes to curses, improved treater ai, bug fixes",
 		"0.1.5": "entity & curse changes, some config",
 		"0.1.4": "mostly rendering bugs",
 		"0.1.3": "mostly curse related fixes",
@@ -21,6 +22,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.12": {
+		"0.1.6": "more changes to curses, improved treater ai, bug fixes",
 		"0.1.5": "entity & curse changes, some config",
 		"0.1.4": "mostly rendering bugs",
 		"0.1.3": "mostly curse related fixes",
@@ -29,6 +31,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.11.2": {
+		"0.1.6": "more changes to curses, improved treater ai, bug fixes",
 		"0.1.5": "entity & curse changes, some config",
 		"0.1.4": "mostly rendering bugs",
 		"0.1.3": "mostly curse related fixes",
@@ -37,6 +40,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.11": {
+		"0.1.6": "more changes to curses, improved treater ai, bug fixes",
 		"0.1.5": "entity & curse changes, some config",
 		"0.1.4": "mostly rendering bugs",
 		"0.1.3": "mostly curse related fixes",
@@ -45,6 +49,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.10.2": {
+		"0.1.6": "more changes to curses, improved treater ai, bug fixes",
 		"0.1.5": "entity & curse changes, some config",
 		"0.1.4": "mostly rendering bugs",
 		"0.1.3": "mostly curse related fixes",

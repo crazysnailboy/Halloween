@@ -88,7 +88,8 @@ public class EntityTreater extends EntityAnimal
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.6D);
 	}
 
 	@Override
@@ -158,7 +159,7 @@ public class EntityTreater extends EntityAnimal
 	protected void damageEntity(DamageSource damageSource, float damageAmount)
 	{
 		super.damageEntity(damageSource, damageAmount);
-		if (damageSource.getImmediateSource() instanceof EntityPlayer)
+		if (damageSource.getTrueSource() instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)damageSource.getImmediateSource();
 			this.chatItUp(player, EnumTreaterMessage.HURTING);
@@ -172,7 +173,7 @@ public class EntityTreater extends EntityAnimal
 	@Override
 	public void onDeath(DamageSource damageSource)
 	{
-		if (damageSource.getImmediateSource() instanceof EntityPlayer)
+		if (damageSource.getTrueSource() instanceof EntityPlayer)
 		{
 			EntityMob mob = null;
 			switch (this.getTreaterType())
@@ -197,26 +198,31 @@ public class EntityTreater extends EntityAnimal
 	{
 		ItemStack stack = entity.getItem();
 
-		if (stack.getItem() == ModItems.MEGA_CANDY || (stack.getItem() == ModItems.CANDY && stack.getMetadata() == this.getTreaterType().getCandyType().getMetadata()))
+		// if the stack contains mega candy, or the treater's preferred type of candy...
+		if (canTreaterPickupItem(stack))
 		{
+			// if the stack was thrown...
 			String thrower = entity.getThrower();
 			if (!StringUtils.isNullOrEmpty(thrower))
 			{
+				// if it was thrown by a player who's within 4 blocks of the treater...
 				EntityPlayer player = this.world.getPlayerEntityByName(thrower);
-				if (player != null)
+				if (player != null && this.getDistanceToEntity(player) < 4.0F)
 				{
+					// thank the player and give them an item
 					if (stack.getItem() == ModItems.MEGA_CANDY)
 					{
 						this.chatItUp(player, EnumTreaterMessage.SUPERING);
+						// TODO thankyou items for mega candy
 					}
 					else
 					{
 						this.chatItUp(player, EnumTreaterMessage.THANKING);
 						this.dropThankItem(player);
 					}
-
 				}
 			}
+			// kill the entity to make the item disappear as if the treater picked it up
 			entity.setDead();
 		}
 	}
@@ -280,6 +286,15 @@ public class EntityTreater extends EntityAnimal
 	private void setTreaterType(EnumTreaterType value)
 	{
 		this.dataManager.set(TREATER_TYPE, value.ordinal());
+	}
+
+	public boolean canTreaterPickupItem(ItemStack stack)
+	{
+		return (
+			stack.getItem() == ModItems.MEGA_CANDY
+			||
+			(stack.getItem() == ModItems.CANDY && stack.getMetadata() == this.getTreaterType().getCandyType().getMetadata())
+		);
 	}
 
 	/**
