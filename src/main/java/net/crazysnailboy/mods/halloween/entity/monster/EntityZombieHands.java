@@ -105,7 +105,7 @@ public class EntityZombieHands extends EntityZombie
 			{
 				entCount = rand.nextInt(8);
 
-				List<EntityZombie> entities = this.world.getEntitiesWithinAABB(EntityZombie.class, this.getEntityBoundingBox().expand(16.0D, 16.0D, 16.0D), new Predicate<EntityZombie>()
+				List<EntityZombie> entities = this.world.getEntitiesWithinAABB(EntityZombie.class, this.getEntityBoundingBox().grow(16.0D, 16.0D, 16.0D), new Predicate<EntityZombie>()
 				{
 					@Override
 					public boolean apply(@Nullable EntityZombie entity)

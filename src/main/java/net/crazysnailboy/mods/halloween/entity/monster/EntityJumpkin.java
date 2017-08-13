@@ -181,7 +181,7 @@ public class EntityJumpkin extends EntitySlime
 //
 //		if (this.world.getLight(pos) > 0 && this.world.getBlockState(pos.down()) == Material.GRASS && EntityUtils.getCanLivingSpawnHere(this))
 //		{
-//			List<Entity> entities = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(2.0D, 2.0D, 2.0D));
+//			List<Entity> entities = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().grow(2.0D, 2.0D, 2.0D));
 //			return entities.isEmpty();
 //		}
 //		return false;

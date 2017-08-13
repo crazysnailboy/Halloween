@@ -34,7 +34,7 @@ public class EntityGhastCurse extends EntityCurse
 		if (this.lifetime > 0 && this.victim != null)
 		{
 			// get a list of the mobs within a 50 block radius of the victim (can't use EntityMob because Slimes & Jumpkins don't extend that class)
-			List<EntityLiving> entities = this.world.getEntitiesWithinAABB(EntityLiving.class, this.getEntityBoundingBox().expand(50.0D, 50.0D, 50.0D), new Predicate<EntityLiving>()
+			List<EntityLiving> entities = this.world.getEntitiesWithinAABB(EntityLiving.class, this.getEntityBoundingBox().grow(50.0D, 50.0D, 50.0D), new Predicate<EntityLiving>()
 			{
 				@Override
 				public boolean apply(@Nullable EntityLiving entity)

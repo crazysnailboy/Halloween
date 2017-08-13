@@ -142,7 +142,8 @@ public class EntityAIHaunter
 
 		private AxisAlignedBB getTargetableArea(double targetDistance)
 		{
-			return this.taskOwner.getEntityBoundingBox().expand(targetDistance, 4.0D, targetDistance);
+			// .expand() in 1.10 is the same as .grow() 1.11 & 1.12. in 1.11 & 1.12, .expand() is the same as .addCoord() in 1.10
+			return this.taskOwner.getEntityBoundingBox().grow(targetDistance, 4.0D, targetDistance);
 		}
 
 		/**
