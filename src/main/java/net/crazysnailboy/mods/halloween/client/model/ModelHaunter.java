@@ -1,8 +1,8 @@
 package net.crazysnailboy.mods.halloween.client.model;
 
-import org.lwjgl.opengl.GL11;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 
 
@@ -24,8 +24,6 @@ public class ModelHaunter extends ModelBase
 
 	public ModelHaunter(float modelSize, float p_i1149_2_)
 	{
-		this.opacity = 1.0F;
-
 		this.bipedHead = new ModelRenderer(this, 33, 0);
 		this.bipedHead.addBox(-4.0F, -8.0F, -3.0F, 8, 26, 6, modelSize);
 		this.bipedHead.setRotationPoint(0.0F, 0.0F + p_i1149_2_, 0.0F);
@@ -41,31 +39,30 @@ public class ModelHaunter extends ModelBase
 	{
 		this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
 
-		if (this.opacity > 0F)
+		if (this.opacity > 0.0F)
 		{
-			//GL11.glEnable(2977 /*GL_NORMALIZE*/);
-			GL11.glEnable(3042 /*GL_BLEND*/);
+			GlStateManager.pushMatrix();
+			GlStateManager.enableBlend(); // GL11.glEnable(3042 /*GL_BLEND*/);
 
-			float a = this.opacity;
-			if (this.opacity > 1.0F)
-			{
-				this.opacity = 1.0F;
-			}
-			float b = ((this.brightness * 0.45F) + 0.55F);
+			if (this.opacity > 1.0F) this.opacity = 1.0F;
 
-			GL11.glColor4f(b, b, b, a);
+			float gray = ((this.brightness * 0.45F) + 0.55F);
+			GlStateManager.color(gray, gray, gray, this.opacity); // GL11.glColor4f(gray, gray, gray, this.opacity);
 			this.bipedHead.render(scale);
 
-			GL11.glColor4f(1F, 1F, 1F, a);
+			GlStateManager.color(1.0F, 1.0F, 1.0F, this.opacity); // GL11.glColor4f(1.0F, 1.0F, 1.0F, this.opacity);
 			this.bipedHeadwear.render(scale);
+
+			GlStateManager.disableBlend();
+			GlStateManager.popMatrix();
 		}
 	}
 
 	@Override
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale, Entity entity)
 	{
-		this.bipedHead.rotateAngleY = netHeadYaw / 57.29578F;
-		this.bipedHead.rotateAngleX = 0F;
+		this.bipedHead.rotateAngleY = netHeadYaw / (180.0F / (float)Math.PI);
+		this.bipedHead.rotateAngleX = 0.0F;
 		this.bipedHeadwear.rotateAngleY = this.bipedHead.rotateAngleY;
 		this.bipedHeadwear.rotateAngleX = this.bipedHead.rotateAngleX;
 	}
