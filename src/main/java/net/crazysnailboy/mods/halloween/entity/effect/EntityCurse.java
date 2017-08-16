@@ -3,6 +3,8 @@ package net.crazysnailboy.mods.halloween.entity.effect;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import com.google.common.base.Predicate;
+import net.crazysnailboy.mods.halloween.entity.monster.EntityHaunter;
 import net.crazysnailboy.mods.halloween.util.WorldUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -12,8 +14,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 
 /**
@@ -72,7 +76,8 @@ public abstract class EntityCurse extends Entity
 			}
 			if (this.victim instanceof EntityPlayer)
 			{
-				((EntityPlayer)this.victim).sendMessage(new TextComponentTranslation("chat.curse.struck", this.getCurseType().getDisplayName()));
+				((EntityPlayer)this.victim).sendMessage(new TextComponentString(String.format(I18n.translateToLocal("chat.curse.struck"), this.getCurseType().getDisplayName())));
+//				((EntityPlayer)this.victim).sendMessage(new TextComponentTranslation("chat.curse.struck", this.getCurseType().getDisplayName()));
 			}
 			this.setPosition(this.victim.posX, this.victim.posY + this.victim.getEyeHeight(), this.victim.posZ);
 		}
@@ -121,7 +126,14 @@ public abstract class EntityCurse extends Entity
 			if (this.victim == null)
 			{
 				// get the closest living entity in the vicinity
-				EntityLivingBase entity = WorldUtils.getClosestEntity(this.world, EntityLivingBase.class, this.getPosition(), 2.0D);
+				EntityLivingBase entity = WorldUtils.getClosestEntity(this.world, EntityLivingBase.class, this.getPosition(), 2.0D, new Predicate<EntityLivingBase>()
+				{
+					@Override
+					public boolean apply(EntityLivingBase apply)
+					{
+						return !(apply instanceof EntityHaunter);
+					}
+				});
 
 				// if we've found one...
 				if (entity != null && !entity.isDead && entity.getHealth() > 0.0F)
@@ -186,7 +198,7 @@ public abstract class EntityCurse extends Entity
 		String s = compound.getString("VictimUUID");
 		if (!s.isEmpty())
 		{
-			this.victim = WorldUtils.getEntityByUUID(this.world, EntityLivingBase.class, UUID.fromString(s));
+			this.victim = (EntityLivingBase)((WorldServer)this.world).getEntityFromUuid(UUID.fromString(s));
 		}
 	}
 

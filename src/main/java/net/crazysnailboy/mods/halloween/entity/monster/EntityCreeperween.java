@@ -1,24 +1,23 @@
 package net.crazysnailboy.mods.halloween.entity.monster;
 
+import net.crazysnailboy.mods.halloween.entity.ai.EntityAICreeperween;
 import net.crazysnailboy.mods.halloween.init.ModItems;
 import net.crazysnailboy.mods.halloween.item.ItemCandy.EnumCandyFlavour;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -59,43 +58,6 @@ public class EntityCreeperween extends EntityMob
 		this.setEntityInvulnerable(true);
 	}
 
-	@Override
-	protected void initEntityAI()
-	{
-		this.tasks.addTask(1, new EntityAISwimming(this));
-		this.tasks.addTask(2, new EntityCreeperween.EntityAICreeperweenSwell(this));
-		this.tasks.addTask(4, new EntityAIAttackMelee(this, 1.0D, false));
-		this.tasks.addTask(5, new EntityAIWander(this, 0.8D));
-		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.tasks.addTask(6, new EntityAILookIdle(this));
-		this.targetTasks.addTask(1, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
-		this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false, new Class[0]));
-	}
-
-	@Override
-	protected void applyEntityAttributes()
-	{
-		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
-	}
-
-	@Override
-	public int getMaxFallHeight()
-	{
-		return this.getAttackTarget() == null ? 3 : 3 + (int)(this.getHealth() - 1.0F);
-	}
-
-	@Override
-	public void fall(float distance, float damageMultiplier)
-	{
-		super.fall(distance, damageMultiplier);
-		this.timeSinceIgnited = (int)((float)this.timeSinceIgnited + distance * 1.5F);
-
-		if (this.timeSinceIgnited > this.fuseTime - 5)
-		{
-			this.timeSinceIgnited = this.fuseTime - 5;
-		}
-	}
 
 	@Override
 	protected void entityInit()
@@ -106,22 +68,23 @@ public class EntityCreeperween extends EntityMob
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound compound)
+	protected void applyEntityAttributes()
 	{
-		super.writeEntityToNBT(compound);
-		compound.setShort("Fuse", (short)this.fuseTime);
-		compound.setByte("ExplosionRadius", (byte)this.explosionRadius);
-		compound.setBoolean("ignited", this.hasIgnited());
+		super.applyEntityAttributes();
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound compound)
+	protected void initEntityAI()
 	{
-		super.readEntityFromNBT(compound);
-		if (compound.hasKey("Fuse", NBT.TAG_ANY_NUMERIC)) this.fuseTime = compound.getShort("Fuse");
-		if (compound.hasKey("ExplosionRadius", NBT.TAG_ANY_NUMERIC)) this.explosionRadius = compound.getByte("ExplosionRadius");
-		if (compound.getBoolean("ignited")) this.ignite();
-		this.setEntityInvulnerable(true);
+		this.tasks.addTask(1, new EntityAISwimming(this));
+		this.tasks.addTask(2, new EntityAICreeperween.Swell(this));
+		this.tasks.addTask(4, new EntityAIAttackMelee(this, 1.0D, false));
+		this.tasks.addTask(5, new EntityAIWander(this, 0.8D));
+		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+		this.tasks.addTask(6, new EntityAILookIdle(this));
+		this.targetTasks.addTask(1, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+		this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false, new Class[0]));
 	}
 
 	@Override
@@ -156,8 +119,44 @@ public class EntityCreeperween extends EntityMob
 				this.explode();
 			}
 		}
-
 		super.onUpdate();
+	}
+
+	@Override
+	public int getMaxFallHeight()
+	{
+		return this.getAttackTarget() == null ? 3 : 3 + (int)(this.getHealth() - 1.0F);
+	}
+
+	@Override
+	public void fall(float distance, float damageMultiplier)
+	{
+		super.fall(distance, damageMultiplier);
+		this.timeSinceIgnited = (int)((float)this.timeSinceIgnited + distance * 1.5F);
+
+		if (this.timeSinceIgnited > this.fuseTime - 5)
+		{
+			this.timeSinceIgnited = this.fuseTime - 5;
+		}
+	}
+
+	@Override
+	public void writeEntityToNBT(NBTTagCompound compound)
+	{
+		super.writeEntityToNBT(compound);
+		compound.setShort("Fuse", (short)this.fuseTime);
+		compound.setByte("ExplosionRadius", (byte)this.explosionRadius);
+		compound.setBoolean("ignited", this.hasIgnited());
+	}
+
+	@Override
+	public void readEntityFromNBT(NBTTagCompound compound)
+	{
+		super.readEntityFromNBT(compound);
+		if (compound.hasKey("Fuse", NBT.TAG_ANY_NUMERIC)) this.fuseTime = compound.getShort("Fuse");
+		if (compound.hasKey("ExplosionRadius", NBT.TAG_ANY_NUMERIC)) this.explosionRadius = compound.getByte("ExplosionRadius");
+		if (compound.getBoolean("ignited")) this.ignite();
+		this.setEntityInvulnerable(true);
 	}
 
 	@Override
@@ -248,7 +247,23 @@ public class EntityCreeperween extends EntityMob
 			for (int i = 0; i < count; i++)
 			{
 				ItemStack stack = new ItemStack(ModItems.CANDY, 1, EnumCandyFlavour.getRandom().getMetadata());
-				InventoryHelper.spawnItemStack(this.world, this.posX, this.posY, this.posZ, stack);
+
+				// *** modified from InventoryHelper.spawnItemStack ***
+				float randX = this.rand.nextFloat() * 0.8F + 0.3F;
+				float randY = this.rand.nextFloat() * 0.8F + 0.3F;
+				float randZ = this.rand.nextFloat() * 0.8F + 0.3F;
+
+				while (!stack.isEmpty())
+				{
+					EntityItem entityitem = new EntityItem(this.world, this.posX + (double)randX, this.posY + (double)randY, this.posZ + (double)randZ, stack.splitStack(this.rand.nextInt(21) + 10));
+					entityitem.motionX = this.rand.nextGaussian() * 0.1D;
+					entityitem.motionY = this.rand.nextGaussian() * 0.1D + 0.4D;
+					entityitem.motionZ = this.rand.nextGaussian() * 0.1D;
+					this.world.spawnEntity(entityitem);
+				}
+				// *** modified from InventoryHelper.spawnItemStack ***
+
+//				InventoryHelper.spawnItemStack(this.world, this.posX, this.posY, this.posZ, stack);
 			}
 		}
 	}
@@ -277,66 +292,5 @@ public class EntityCreeperween extends EntityMob
 //		}
 //		return false;
 //	}
-
-
-	/**
-	 * Copied from {@link net.minecraft.entity.ai.EntityAICreeperSwell}.
-	 * Changed to swell an instance of EntityCreeperween rather than EntityCreeper.
-	 *
-	 */
-	static class EntityAICreeperweenSwell extends EntityAIBase
-	{
-
-		EntityCreeperween swellingCreeper;
-		EntityLivingBase creeperAttackTarget;
-
-		public EntityAICreeperweenSwell(EntityCreeperween entitycreeperIn)
-		{
-			this.swellingCreeper = entitycreeperIn;
-			this.setMutexBits(1);
-		}
-
-		@Override
-		public boolean shouldExecute()
-		{
-			EntityLivingBase entitylivingbase = this.swellingCreeper.getAttackTarget();
-			return this.swellingCreeper.getCreeperState() > 0 || entitylivingbase != null && this.swellingCreeper.getDistanceSqToEntity(entitylivingbase) < 9.0D;
-		}
-
-		@Override
-		public void startExecuting()
-		{
-			this.swellingCreeper.getNavigator().clearPathEntity();
-			this.creeperAttackTarget = this.swellingCreeper.getAttackTarget();
-		}
-
-		@Override
-		public void resetTask()
-		{
-			this.creeperAttackTarget = null;
-		}
-
-		@Override
-		public void updateTask()
-		{
-			if (this.creeperAttackTarget == null)
-			{
-				this.swellingCreeper.setCreeperState(-1);
-			}
-			else if (this.swellingCreeper.getDistanceSqToEntity(this.creeperAttackTarget) > 49.0D)
-			{
-				this.swellingCreeper.setCreeperState(-1);
-			}
-			else if (!this.swellingCreeper.getEntitySenses().canSee(this.creeperAttackTarget))
-			{
-				this.swellingCreeper.setCreeperState(-1);
-			}
-			else
-			{
-				this.swellingCreeper.setCreeperState(1);
-			}
-		}
-	}
-
 
 }

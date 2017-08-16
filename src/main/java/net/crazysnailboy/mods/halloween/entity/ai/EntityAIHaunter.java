@@ -1,8 +1,5 @@
 package net.crazysnailboy.mods.halloween.entity.ai;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Random;
 import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
@@ -13,19 +10,20 @@ import net.crazysnailboy.mods.halloween.entity.monster.fake.EntityFakeSkeleton;
 import net.crazysnailboy.mods.halloween.entity.monster.fake.EntityFakeSpider;
 import net.crazysnailboy.mods.halloween.entity.monster.fake.EntityFakeZombie;
 import net.crazysnailboy.mods.halloween.init.ModSoundEvents;
-import net.minecraft.entity.Entity;
+import net.crazysnailboy.mods.halloween.util.WorldUtils;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAITarget;
+import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.init.MobEffects;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.WorldEntitySpawner;
@@ -42,121 +40,150 @@ public class EntityAIHaunter
 	 * Haunters will detect players within a 64 block range,
 	 * and either take over a nearby hostile mob or spawn a new one, and make that mob attack the player.
 	 */
-	public static class Attack extends EntityAITarget
+	public static class Attack extends EntityAIBase
 	{
 
-		protected final Attack.Sorter sorter;
-		protected EntityPlayer targetPlayer;
+		private final EntityHaunter taskOwner;
+		private int attackStep;
+		private int attackTime;
+		private EntityPlayer attackTarget;
 		private EntityMob currentDrone;
-		protected final EntityHaunter haunter;
-	    protected int runDelay;
-
-		private final Predicate<EntityPlayer> predicate;
-
-		private final Predicate<EntityMob> mobPredicate = new Predicate<EntityMob>()
-		{
-			@Override
-			public boolean apply(@Nullable EntityMob entity)
-			{
-				return (Attack.this.taskOwner != entity);
-			}
-		};
+		private int droneAge;
 
 
 		public Attack(EntityHaunter taskOwner)
 		{
-			this(taskOwner, true, (Predicate<EntityPlayer>)null);
+			this.taskOwner = taskOwner;
+			this.setMutexBits(3);
 		}
 
-		private Attack(EntityHaunter taskOwner, boolean checkSight, @Nullable final Predicate<EntityPlayer> targetSelector)
-		{
-			super(taskOwner, checkSight, false);
-			this.haunter = taskOwner;
-			this.predicate = new Predicate<EntityPlayer>()
-			{
-				@Override
-				public boolean apply(@Nullable EntityPlayer player)
-				{
-					return player == null ? false : (targetSelector != null && !targetSelector.apply(player) ? false : (!EntitySelectors.NOT_SPECTATING.apply(player) ? false : Attack.this.isSuitableTarget(player, false)));
-				}
-			};
-			this.sorter = new Attack.Sorter(this.taskOwner);
-			this.setMutexBits(1);
-		}
-
-
-		/**
-		 * Returns true if there's an attackable player within the mob's target range.
-		 */
 		@Override
 		public boolean shouldExecute()
 		{
-	        if (this.runDelay > 0)
-	        {
-	            --this.runDelay;
-	            return false;
-	        }
-	        else
-	        {
-	            this.runDelay = 200 + this.taskOwner.getRNG().nextInt(200);
-
-				this.targetPlayer = this.taskOwner.world.getNearestAttackablePlayer(
-					this.taskOwner.posX, this.taskOwner.posY + (double)this.taskOwner.getEyeHeight(), this.taskOwner.posZ,
-					this.getTargetDistance(), this.getTargetDistance(),
-					null, this.predicate);
-
-				return (this.targetPlayer != null);
-	        }
+			EntityLivingBase attackTarget = this.taskOwner.getAttackTarget();
+			return (attackTarget != null && attackTarget.isEntityAlive() && attackTarget instanceof EntityPlayer);
 		}
 
 		@Override
 		public void startExecuting()
 		{
-			this.taskOwner.setAttackTarget(this.targetPlayer);
-			super.startExecuting();
+			this.attackTarget = (EntityPlayer)this.taskOwner.getAttackTarget();
+			this.attackStep = 0;
+		}
+
+		@Override
+		public void resetTask()
+		{
+			this.taskOwner.setCycleVisibility(1);
+			this.taskOwner.setTransparencyState(EnumTransparencyState.TRANSPARENT);
 		}
 
 		@Override
 		public void updateTask()
 		{
-			super.updateTask();
+			this.attackTime--;
+			if (this.currentDrone != null) this.droneAge++;
 
-			// if our current drone is dead, remove it as a drone.
-			if (this.currentDrone != null && this.currentDrone.isDead)
+			double distanceSq = this.taskOwner.getDistanceSqToEntity(attackTarget);
+			if (distanceSq < 4.0D)
 			{
-				this.currentDrone = null;
+				if (this.attackTime <= 0)
+				{
+					this.attackTime = 20;
+					this.taskOwner.attackEntityAsMob(attackTarget);
+				}
+
+				this.taskOwner.getMoveHelper().setMoveTo(attackTarget.posX, attackTarget.posY, attackTarget.posZ, 1.0D);
+			}
+			else if (distanceSq < 256.0D)
+			{
+				// if the attack timer has run down...
+				if (this.attackTime <= 0)
+				{
+					// increment the attack step
+					++this.attackStep;
+
+					switch (this.attackStep)
+					{
+						// if the attack step is 1...
+						case 1:
+							// fade the haunter in, and delay by 60 ticks before proceeding to step 2
+							this.taskOwner.setCycleVisibility(51);
+							this.attackTime = 60;
+							break;
+
+						// if the attack step is 2...
+						case 2:
+							// attempt the drone attack
+							startDroneAttack();
+							this.attackTime = 20;
+
+						// if the attack step is 3...
+						case 3:
+							// fade the haunter out, and reset the attack step and timer
+							this.taskOwner.setCycleVisibility(1);
+							this.attackTime = 100;
+							this.attackStep = 0;
+
+					}
+				}
+
+				this.taskOwner.getLookHelper().setLookPositionWithEntity(attackTarget, 10.0F, 10.0F);
+			}
+			else
+			{
+				this.taskOwner.getNavigator().clearPathEntity();
+				this.taskOwner.getMoveHelper().setMoveTo(attackTarget.posX, attackTarget.posY, attackTarget.posZ, 1.0D);
+			}
+			super.updateTask();
+		}
+
+
+		private void startDroneAttack()
+		{
+			if (this.currentDrone != null)
+			{
+				if (this.droneAge >= 600)
+				{
+					this.currentDrone.setDead();
+				}
+				if (this.currentDrone.isDead)
+				{
+					this.currentDrone = null;
+				}
 			}
 
-			// if we don't have a current drone,
-			// either attempt to take over the nearest available hostile mob or spawn one if there isn't one available
-			if (this.currentDrone == null) this.currentDrone = getNearestAvailableDrone();
-			if (this.currentDrone == null) this.currentDrone = createDrone();
+			if (this.currentDrone == null)
+			{
+				this.currentDrone = getDrone();
+				if (this.currentDrone == null) this.currentDrone = createDrone();
 
-			// make the selected mob attack the player
-			if (this.currentDrone != null) this.initializeDrone(this.currentDrone);
-
-//			this.currentDrone.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 300, 0));
-
+				if (this.currentDrone != null)
+				{
+					if (this.initializeDrone(this.currentDrone))
+					{
+						this.currentDrone.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 300, 0));
+						this.droneAge = 0;
+					}
+				}
+			}
 		}
 
-
-		private AxisAlignedBB getTargetableArea(double targetDistance)
-		{
-			return this.taskOwner.getEntityBoundingBox().grow(targetDistance, 4.0D, targetDistance);
-		}
 
 		/**
 		 * Find the nearest hostile mob to the player
 		 */
-		private EntityMob getNearestAvailableDrone()
+		private EntityMob getDrone()
 		{
-			List<EntityMob> list = this.taskOwner.world.<EntityMob>getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(this.getTargetDistance()), mobPredicate);
-			if (!list.isEmpty())
+			EntityMob entity = WorldUtils.getRandomEntity(this.taskOwner.world, EntityMob.class, this.attackTarget.getPosition(), 32.0D, new Predicate<EntityMob>()
 			{
-				Collections.sort(list, this.sorter);
-				return list.get(0);
-			}
-			return null;
+				@Override
+				public boolean apply(@Nullable EntityMob entity)
+				{
+					return !(entity instanceof EntityHaunter);
+				}
+			});
+			return entity;
 		}
 
 		/**
@@ -165,7 +192,7 @@ public class EntityAIHaunter
 		private EntityMob createDrone()
 		{
 			EntityMob entity = null;
-			Random rand = this.taskOwner.world.rand;
+			Random rand = this.taskOwner.getRNG();
 
 			// create a drone entity of a random type, with a chance of it being a fake
 			int entityType = rand.nextInt(4);
@@ -190,9 +217,9 @@ public class EntityAIHaunter
 			}
 
 			// attempt to place the drone near to the player
-			double x = this.targetPlayer.posX;
-			double y = this.targetPlayer.posY;
-			double z = this.targetPlayer.posZ;
+			double x = this.attackTarget.posX;
+			double y = this.attackTarget.posY;
+			double z = this.attackTarget.posZ;
 
 			// make 32 attempts to find a valid spawn location for the drone...
 			for (int i = 0; i < 32; i++)
@@ -217,8 +244,8 @@ public class EntityAIHaunter
 					entity.spawnExplosionParticle();
 					entity.playSound(ModSoundEvents.ENTITY_HAUNTER_APPEAR, 5.0F, ((rand.nextFloat() - rand.nextFloat()) * 0.1F) + 1.0F);
 
-					this.haunter.setCycleVisibility(1);
-					this.haunter.setTransparencyState(EnumTransparencyState.TRANSPARENT);
+					this.taskOwner.setCycleVisibility(1);
+					this.taskOwner.setTransparencyState(EnumTransparencyState.TRANSPARENT);
 
 
 					// increment the counter for the number of drones produced
@@ -235,47 +262,30 @@ public class EntityAIHaunter
 		/**
 		 * Make the drone mob attack the target player
 		 */
-		private void initializeDrone(EntityMob mob)
+		private boolean initializeDrone(EntityMob mob)
 		{
 			// ensure that the drone has sufficient follow range to be able to path to the player
 			double followRange = mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
-			if (followRange < mob.getDistanceToEntity(this.targetPlayer))
+			float distance = mob.getDistanceToEntity(this.attackTarget);
+			if (followRange < distance)
 			{
-				mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(followRange * 1.1D);
+				mob.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(distance * 1.1D);
 			}
 
 			// set the drone on a path to the player
-			if (mob.getNavigator().tryMoveToEntityLiving(this.targetPlayer, this.currentDrone.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue()))
+			boolean canNavigate = mob.getNavigator().tryMoveToEntityLiving(this.attackTarget, this.currentDrone.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
+			if (canNavigate)
 			{
 				// set the drone's attack target to be the player
-				mob.setAttackTarget(this.targetPlayer);
+				mob.setAttackTarget(this.attackTarget);
 			}
-		}
-
-
-		/**
-		 * Comparator for sorting a collection of {@link Entity} objects by distance from a specified target {@link Entity}.
-		 * TODO - this class is duplicated - consolidate.
-		 */
-		public static class Sorter implements Comparator<Entity>
-		{
-
-			private final Entity entity;
-
-			public Sorter(Entity entity)
+			else
 			{
-				this.entity = entity;
+				this.currentDrone = null;
 			}
 
-			@Override
-			public int compare(Entity entityA, Entity entityB)
-			{
-				double d0 = this.entity.getDistanceSqToEntity(entityA);
-				double d1 = this.entity.getDistanceSqToEntity(entityB);
-				return d0 < d1 ? -1 : (d0 > d1 ? 1 : 0);
-			}
+			return canNavigate;
 		}
-
 
 	}
 

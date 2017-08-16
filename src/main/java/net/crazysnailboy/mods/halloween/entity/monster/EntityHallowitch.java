@@ -40,6 +40,13 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 
 
 	@Override
+	protected void applyEntityAttributes()
+	{
+		super.applyEntityAttributes();
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
+	}
+
+	@Override
 	protected void initEntityAI()
 	{
 		this.tasks.addTask(1, new EntityAISwimming(this));
@@ -51,13 +58,6 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 		this.targetTasks.addTask(2, new EntityAIHallowitch.TargetAggressor(this)); // this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
 	}
 
-	@Override
-	protected void applyEntityAttributes()
-	{
-		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
-	}
-
 	/**
 	 * Adapted from {@link net.minecraft.entity.monster.EntityWitch#attackEntityWithRangedAttack(EntityLivingBase, float)}
 	 */
@@ -67,9 +67,11 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 		double x = target.posX + target.motionX - this.posX;
 		double z = target.posZ + target.motionZ - this.posZ;
 		double y = ((target.posY + (double)target.getEyeHeight() - 1.1D) - this.posY) + (double)(MathHelper.sqrt(x * x + z * z) * 0.2F);
+
 		EntityCurseOrb entity = new EntityCurseOrb(this.world, this);
 		entity.rotationPitch -= -20.0F;
 		entity.setThrowableHeading(x, y, z, 0.75F, 8.0F);
+
 		this.world.playSound((EntityPlayer)null, this.posX, this.posY, this.posZ, SoundEvents.ENTITY_WITCH_THROW, this.getSoundCategory(), 1.0F, 0.8F + this.rand.nextFloat() * 0.4F);
 		this.world.spawnEntity(entity);
 	}
@@ -106,7 +108,7 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 	@Override
 	protected ResourceLocation getLootTable()
 	{
-		return ModLootTables.ENTITIES_HALLOWMOB;
+		return ModLootTables.ENTITIES_HALLOWITCH;
 	}
 
 	@Override
