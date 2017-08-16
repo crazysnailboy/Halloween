@@ -224,6 +224,7 @@ public class EntityZombieHands extends EntityZombie
 		zombie.setPosition(this.posX, this.posY, this.posZ);
 		zombie.setHealth(this.getHealth());
 		zombie.setFire(EntityUtils.getFire(this));
+		zombie.setZombieType(this.getZombieType());
 		zombie.setAttackTarget(this.getAttackTarget());
 
 		this.springEffect();
@@ -242,6 +243,7 @@ public class EntityZombieHands extends EntityZombie
 		entity.setPosition(zombie.posX, zombie.posY, zombie.posZ);
 		entity.setHealth(zombie.getHealth());
 		entity.setFire(EntityUtils.getFire(zombie));
+		entity.setZombieType(this.getZombieType());
 		entity.setAttackTarget(zombie.getAttackTarget());
 
 		zombie.setDead();

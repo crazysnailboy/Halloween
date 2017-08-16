@@ -4,6 +4,7 @@ import net.crazysnailboy.mods.halloween.client.model.ModelZombieHands;
 import net.crazysnailboy.mods.halloween.entity.monster.EntityZombieHands;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.monster.ZombieType;
 import net.minecraft.util.ResourceLocation;
 
 
@@ -11,6 +12,7 @@ public class RenderZombieHands extends RenderBiped<EntityZombieHands>
 {
 
 	private static final ResourceLocation ZOMBIE_TEXTURES = new ResourceLocation("textures/entity/zombie/zombie.png");
+	private static final ResourceLocation HUSK_ZOMBIE_TEXTURES = new ResourceLocation("textures/entity/zombie/husk.png");
 
 
 	public RenderZombieHands(RenderManager renderManager)
@@ -34,7 +36,7 @@ public class RenderZombieHands extends RenderBiped<EntityZombieHands>
 	@Override
 	protected ResourceLocation getEntityTexture(EntityZombieHands entity)
 	{
-		return ZOMBIE_TEXTURES;
+		return entity.getZombieType() == ZombieType.HUSK ? HUSK_ZOMBIE_TEXTURES : ZOMBIE_TEXTURES;
 	}
 
 }
