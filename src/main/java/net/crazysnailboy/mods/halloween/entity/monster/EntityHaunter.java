@@ -4,6 +4,7 @@ import net.crazysnailboy.mods.halloween.entity.ai.EntityAIHaunter;
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
 import net.crazysnailboy.mods.halloween.init.ModSoundEvents;
 import net.crazysnailboy.mods.halloween.network.datasync.ModDataSerializers;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -22,6 +23,7 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -57,15 +59,12 @@ public class EntityHaunter extends EntityMob
 
 
 	@Override
-	protected void initEntityAI()
+	protected void entityInit()
 	{
-		this.tasks.addTask(4, new EntityAIHaunter.Attack(this));
-		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
-		this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
-		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-		this.tasks.addTask(8, new EntityAILookIdle(this));
-		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
-		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+		super.entityInit();
+		this.dataManager.register(CYCLE_VISIBILITY, 0);
+		this.dataManager.register(OPACITY, 0.0F);
+		this.dataManager.register(TRANSPARENCY_STATE, EnumTransparencyState.TRANSPARENT);
 	}
 
 	@Override
@@ -78,12 +77,15 @@ public class EntityHaunter extends EntityMob
 	}
 
 	@Override
-	protected void entityInit()
+	protected void initEntityAI()
 	{
-		super.entityInit();
-		this.dataManager.register(CYCLE_VISIBILITY, 0);
-		this.dataManager.register(OPACITY, 0.0F);
-		this.dataManager.register(TRANSPARENCY_STATE, EnumTransparencyState.TRANSPARENT);
+		this.tasks.addTask(4, new EntityAIHaunter.Attack(this));
+		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
+		this.tasks.addTask(7, new EntityAIWander(this, 1.0D));
+		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+		this.tasks.addTask(8, new EntityAILookIdle(this));
+		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[0]));
+		this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
 	}
 
 	@Override
@@ -120,8 +122,8 @@ public class EntityHaunter extends EntityMob
 	/**
 	 * Adapted from {@link net.minecraft.entity.boss.EntityWither#onLivingUpdate()} to make the haunter fly more like a Wither than a Blaze
 	 */
-//	@Override
-	public void _onLivingUpdate()
+	@Override
+	public void onLivingUpdate()
 	{
 
 //		if (!this.onGround && this.motionY < 0.0D)
@@ -477,8 +479,7 @@ public class EntityHaunter extends EntityMob
 
 	public int dronesProduced;
 
-	@Override
-	public void onLivingUpdate()
+	public void _onLivingUpdate()
 	{
 		if (!this.world.isRemote)
 		{
@@ -600,6 +601,44 @@ public class EntityHaunter extends EntityMob
 
 		super.onLivingUpdate();
 
+	}
+
+	/**
+	 * Overridden to prevent particle effects from Haunters when they land
+	 * Combined from {@link EntityLivingBase#updateFallState(double, boolean, IBlockState, BlockPos)} and Combined from {@link Entity#updateFallState(double, boolean, IBlockState, BlockPos)}
+	 */
+	@Override
+	protected void updateFallState(double y, boolean onGround, IBlockState state, BlockPos pos)
+	{
+		// Copied from EntityLivingBase#updateFallState
+		if (!this.isInWater())
+		{
+			this.handleWaterMovement();
+		}
+		if (!this.world.isRemote && this.fallDistance > 3.0F && onGround)
+		{
+			float f = (float)MathHelper.ceil(this.fallDistance - 3.0F);
+			if (!state.getBlock().isAir(state, world, pos))
+			{
+				double d0 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
+				int i = (int)(150.0D * d0);
+//				if (!state.getBlock().addLandingEffects(state, (WorldServer)this.world, pos, state, this, i))
+//				((WorldServer)this.world).spawnParticle(EnumParticleTypes.BLOCK_DUST, this.posX, this.posY, this.posZ, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, new int[] {Block.getStateId(state)});
+			}
+		}
+		// Copied from Entity#updateFallState
+		if (onGround)
+		{
+			if (this.fallDistance > 0.0F)
+			{
+				state.getBlock().onFallenUpon(this.world, pos, this, this.fallDistance);
+			}
+			this.fallDistance = 0.0F;
+		}
+		else if (y < 0.0D)
+		{
+			this.fallDistance = (float)((double)this.fallDistance - y);
+		}
 	}
 
 }

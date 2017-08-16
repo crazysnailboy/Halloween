@@ -39,6 +39,13 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 
 
 	@Override
+	protected void applyEntityAttributes()
+	{
+		super.applyEntityAttributes();
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
+	}
+
+	@Override
 	protected void initEntityAI()
 	{
 		this.tasks.addTask(1, new EntityAISwimming(this));
@@ -48,13 +55,6 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 		this.tasks.addTask(3, new EntityAILookIdle(this));
 		this.targetTasks.addTask(1, new EntityAIHallowitch.HurtByAggressor(this)); // this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false, new Class[0]));
 		this.targetTasks.addTask(2, new EntityAIHallowitch.TargetAggressor(this)); // this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
-	}
-
-	@Override
-	protected void applyEntityAttributes()
-	{
-		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.4D);
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 	@Override
 	protected ResourceLocation getLootTable()
 	{
-		return ModLootTables.ENTITIES_HALLOWMOB;
+		return ModLootTables.ENTITIES_HALLOWITCH;
 	}
 
 }

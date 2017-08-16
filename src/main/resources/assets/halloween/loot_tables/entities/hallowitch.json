@@ -1,0 +1,15 @@
+{
+	"pools": [{
+		"name": "halloween:hallowitch",
+		"rolls": 1,
+		"conditions": [{
+			"condition": "random_chance",
+			"chance": 0.5
+		}],
+		"entries": [{
+			"type": "item",
+			"name": "halloween:curse_orb",
+			"weight": 1
+		}]
+	}]
+}

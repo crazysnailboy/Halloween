@@ -29,14 +29,14 @@ public class EntityAIJumpkin
 
 		private static final Method setDirection = ReflectionUtils.getDeclaredMethod(SlimeMoveHelper, new String[] { "setDirection", "func_179920_a" }, float.class, boolean.class);
 
-		private final EntityJumpkin entity;
+		private final EntityJumpkin taskOwner;
 		private float chosenDegrees;
 		private int nextRandomizeTime;
 
 
-		public FaceRandom(EntityJumpkin entity)
+		public FaceRandom(EntityJumpkin taskOwner)
 		{
-			this.entity = entity;
+			this.taskOwner = taskOwner;
 			this.setMutexBits(2);
 		}
 
@@ -44,26 +44,9 @@ public class EntityAIJumpkin
 		@Override
 		public boolean shouldExecute()
 		{
-			double followRange = this.entity.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
-			EntityPlayer player = this.entity.world.getClosestPlayerToEntity(this.entity, followRange);
-
-			boolean shouldExecute = (player != null && this.entity.getAttackTarget() == null && (this.entity.onGround || this.entity.isInWater() || this.entity.isInLava() || this.entity.isPotionActive(MobEffects.LEVITATION)));
-			if (!shouldExecute) this.entity.setLit(false);
-			return shouldExecute;
-		}
-
-		@Override
-		public void startExecuting()
-		{
-			if (!this.entity.getAwakened()) this.entity.setAwakened(true);
-			this.entity.setLit(true);
-		}
-
-		@Override
-		public void resetTask()
-		{
-			this.chosenDegrees = (float)(this.entity.getRNG().nextInt(4) * 90.0F);
-			ReflectionUtils.invokeMethod(setDirection, this.entity.getMoveHelper(), this.chosenDegrees, false);
+			double followRange = this.taskOwner.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
+			EntityPlayer player = this.taskOwner.world.getClosestPlayerToEntity(this.taskOwner, followRange);
+			return (player != null && this.taskOwner.getAttackTarget() == null && (this.taskOwner.onGround || this.taskOwner.isInWater() || this.taskOwner.isInLava() || this.taskOwner.isPotionActive(MobEffects.LEVITATION)));
 		}
 
 		@Override
@@ -71,10 +54,10 @@ public class EntityAIJumpkin
 		{
 			if (--this.nextRandomizeTime <= 0)
 			{
-				this.nextRandomizeTime = 40 + this.entity.getRNG().nextInt(60);
-				this.chosenDegrees = (float)this.entity.getRNG().nextInt(360);
+				this.nextRandomizeTime = 40 + this.taskOwner.getRNG().nextInt(60);
+				this.chosenDegrees = (float)this.taskOwner.getRNG().nextInt(360);
 			}
-			ReflectionUtils.invokeMethod(setDirection, this.entity.getMoveHelper(), this.chosenDegrees, false);
+			ReflectionUtils.invokeMethod(setDirection, this.taskOwner.getMoveHelper(), this.chosenDegrees, false);
 		}
 
 	}
@@ -88,36 +71,35 @@ public class EntityAIJumpkin
 
 		private static final Method setSpeed = ReflectionUtils.getDeclaredMethod(SlimeMoveHelper, new String[] { "setSpeed", "func_179921_a" }, double.class);
 
-		private final EntityJumpkin entity;
+		private final EntityJumpkin taskOwner;
 
 
-		public Hop(EntityJumpkin entity)
+		public Hop(EntityJumpkin taskOwner)
 		{
-			this.entity = entity;
+			this.taskOwner = taskOwner;
 			this.setMutexBits(5);
 		}
+
 
 		@Override
 		public boolean shouldExecute()
 		{
-			double followRange = this.entity.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
-			EntityPlayer player = this.entity.world.getClosestPlayerToEntity(this.entity, followRange);
-
-			boolean shouldExecute = (player != null);
-			if (!shouldExecute) this.entity.setLit(false);
-			return shouldExecute;
+			double followRange = this.taskOwner.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).getAttributeValue();
+			EntityPlayer player = this.taskOwner.world.getClosestPlayerToEntity(this.taskOwner, followRange);
+			return (player != null);
 		}
 
 		@Override
 		public void startExecuting()
 		{
-			if (!this.entity.getAwakened()) this.entity.setAwakened(true);
-			this.entity.setLit(true);
+			if (!this.taskOwner.getAwakened()) this.taskOwner.setAwakened(true);
+			this.taskOwner.setLit(true);
 		}
 
 		@Override
 		public void resetTask()
 		{
+			this.taskOwner.setLit(false);
 //			int posX = this.entity.getPosition().getX();
 //			int posZ = this.entity.getPosition().getZ();
 //			this.entity.setPositionAndUpdate(posX, this.entity.posY, posZ);
@@ -127,7 +109,7 @@ public class EntityAIJumpkin
 		@Override
 		public void updateTask()
 		{
-			ReflectionUtils.invokeMethod(setSpeed, this.entity.getMoveHelper(), 1.0D);
+			ReflectionUtils.invokeMethod(setSpeed, this.taskOwner.getMoveHelper(), 1.0D);
 		}
 	}
 

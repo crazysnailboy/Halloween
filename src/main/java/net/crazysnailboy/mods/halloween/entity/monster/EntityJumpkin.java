@@ -49,6 +49,13 @@ public class EntityJumpkin extends EntitySlime
 		this.dataManager.register(LIT, false);
 	}
 
+	@Override
+	protected void applyEntityAttributes()
+	{
+		super.applyEntityAttributes();
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(this.awakened ? 16.0D : 4.0D);
+	}
+
 	/**
 	 * Overridden to call {@link EntitySlime#setSlimeSize(int)} to force all Jumpkins to size 2.
 	 */
@@ -57,7 +64,6 @@ public class EntityJumpkin extends EntitySlime
 	{
 		super.onInitialSpawn(difficulty, livingdata);
 		this.setSlimeSize(2, true);
-		this.alignToBlocks();
 		return livingdata;
 	}
 
@@ -71,21 +77,22 @@ public class EntityJumpkin extends EntitySlime
     }
 
 	@Override
-	protected void applyEntityAttributes()
-	{
-		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(this.awakened ? 16.0D : 4.0D);
-	}
-
-	@Override
 	public void onLivingUpdate()
 	{
 		if (!this.world.isRemote)
 		{
-			// ensure that jumpkins spawn aligned as blocks
+			// ensure that jumpkins spawn aligned as blocks (TODO - doesn't work)
 			if (!this.spawned)
 			{
-				this.alignToBlocks();
+				this.rotationPitch = 0.0F;
+				this.rotationYaw = this.prevRotationYaw = this.rotationYawHead = this.renderYawOffset = (float)this.rand.nextInt(4) * 90.0F;
+				this.setRotation(this.rotationYaw, this.rotationPitch);
+				this.posX = Math.floor(this.posX) + 0.5D;
+				this.posZ = Math.floor(this.posZ) + 0.5D;
+				this.setPosition(this.posX, this.posY, this.posZ);
+				this.motionX = this.motionY = this.motionZ = 0.0D;
+				this.setMoveForward(0.0F);
+
 				this.spawned = true;
 			}
 			// if it's daytime, jumpkins have a chance to turn into pumpkins
@@ -124,7 +131,6 @@ public class EntityJumpkin extends EntitySlime
 		this.spawned = compound.getBoolean("Spawned");
 		this.awakened = compound.getBoolean("Awakened");
 		this.setSlimeSize(2, true);
-		this.alignToBlocks();
 	}
 
 	@Override
@@ -227,6 +233,7 @@ public class EntityJumpkin extends EntitySlime
 
 	private void removeUnneededAITasks()
 	{
+		// remove the EntitySlime$AISlimeHop and EntitySlime$AISlimeFaceRandom tasks, as we're going to replace those with custom ones
 		final Class AISlimeHop = ReflectionUtils.getClass("net.minecraft.entity.monster.EntitySlime$AISlimeHop");
 		final Class AISlimeFaceRandom = ReflectionUtils.getClass("net.minecraft.entity.monster.EntitySlime$AISlimeFaceRandom");
 
@@ -240,6 +247,7 @@ public class EntityJumpkin extends EntitySlime
             }
         }
 
+		// remove the EntityAIFindEntityNearest target task, as we don't want jumpkins to target golems.
         iterator = this.targetTasks.taskEntries.iterator();
         while (iterator.hasNext())
         {
@@ -249,32 +257,6 @@ public class EntityJumpkin extends EntitySlime
             	iterator.remove();
             }
         }
-	}
-
-	private void alignToBlocks()
-	{
-		this.rotationPitch = 0.0F;
-		this.prevRotationYaw = this.rotationYaw = (float)this.rand.nextInt(4) * 90.0F;
-		this.renderYawOffset = this.rotationYaw;
-		this.posX = Math.floor(this.posX) + 0.5D;
-		this.posZ = Math.floor(this.posZ) + 0.5D;
-		this.setPosition(this.posX, this.posY, this.posZ);
-		this.motionX = this.motionY = this.motionZ = 0.0D;
-
-//		this.rotationPitch = 0.0F;
-//		this.prevRotationYaw = this.rotationYaw = (this.spawned ? (Math.round(this.rotationYaw / 90.0F) * 90.0F) : ((float)this.rand.nextInt(4) * 90.0F));
-//		this.renderYawOffset = this.rotationYaw;
-//		this.rotationYawHead = this.rotationYaw;
-//
-//		this.posX = Math.floor(this.posX) + 0.5D;
-//		this.posZ = Math.floor(this.posZ) + 0.5D;
-//
-//		this.setRotation(this.rotationYaw, this.rotationPitch);
-//		this.setPosition(this.posX, this.posY, this.posZ);
-//
-//		this.motionX = this.motionY = this.motionZ = 0.0D;
-//
-//		System.out.println("{ posX=" + this.posX + ", posY=" + this.posY + ", posZ=" + this.posZ + ", pitch=" + this.rotationPitch + ", yaw=" + this.rotationYaw + " }");
 	}
 
 }
