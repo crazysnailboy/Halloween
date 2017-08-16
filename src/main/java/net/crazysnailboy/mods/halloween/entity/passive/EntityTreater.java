@@ -1,8 +1,10 @@
 package net.crazysnailboy.mods.halloween.entity.passive;
 
+import java.util.List;
 import java.util.Random;
 import javax.annotation.Nullable;
 import net.crazysnailboy.mods.halloween.entity.ai.EntityAITreater;
+import net.crazysnailboy.mods.halloween.entity.monster.EntityHallowitch;
 import net.crazysnailboy.mods.halloween.init.ModItems;
 import net.crazysnailboy.mods.halloween.item.ItemCandy.EnumCandyFlavour;
 import net.crazysnailboy.mods.halloween.util.BlockUtils;
@@ -22,8 +24,11 @@ import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -74,6 +79,14 @@ public class EntityTreater extends EntityAnimal
 	}
 
 	@Override
+	protected void applyEntityAttributes()
+	{
+		super.applyEntityAttributes();
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.6D);
+	}
+
+	@Override
 	protected void initEntityAI()
 	{
 		this.tasks.addTask(0, new EntityAISwimming(this));
@@ -82,14 +95,6 @@ public class EntityTreater extends EntityAnimal
 		this.tasks.addTask(5, new EntityAIWander(this, 0.5D));
 		this.tasks.addTask(6, new EntityAITreater.WatchClosestPlayer(this, 6.0F));
 		this.tasks.addTask(7, new EntityAILookIdle(this));
-	}
-
-	@Override
-	protected void applyEntityAttributes()
-	{
-		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(32.0D);
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.6D);
 	}
 
 	@Override
@@ -126,7 +131,7 @@ public class EntityTreater extends EntityAnimal
 				{
 					this.chatItUp(player, EnumTreaterMessage.THANKING);
 					consumeItem = true;
-					dropThankItem(player);
+					dropThankItem(player, false);
 				}
 				else
 				{
@@ -137,6 +142,7 @@ public class EntityTreater extends EntityAnimal
 			if (stack.getItem() == ModItems.MEGA_CANDY)
 			{
 				this.chatItUp(player, EnumTreaterMessage.SUPERING);
+				dropThankItem(player, true);
 				consumeItem = true;
 			}
 
@@ -160,7 +166,7 @@ public class EntityTreater extends EntityAnimal
 		super.damageEntity(damageSource, damageAmount);
 		if (damageSource.getEntity() instanceof EntityPlayer)
 		{
-			EntityPlayer player = (EntityPlayer)damageSource.getSourceOfDamage();
+			EntityPlayer player = (EntityPlayer)damageSource.getEntity();
 			this.chatItUp(player, EnumTreaterMessage.HURTING);
 		}
 	}
@@ -174,17 +180,19 @@ public class EntityTreater extends EntityAnimal
 	{
 		if (damageSource.getEntity() instanceof EntityPlayer)
 		{
-			EntityMob mob = null;
+			EntityPlayer player = (EntityPlayer)damageSource.getEntity();
+			EntityMob entity = null;
 			switch (this.getTreaterType())
 			{
-				case CREEPER: mob = new EntityCreeper(this.world); break;
-				case SKELETON: mob = new EntitySkeleton(this.world); break;
-				case SPIDER: mob = new EntitySpider(this.world); break;
-				case WITCH: mob = new EntityWitch(this.world); break;
-				case ZOMBIE: mob = new EntityZombie(this.world); break;
+				case CREEPER: entity = new EntityCreeper(this.world); break;
+				case SKELETON: entity = new EntitySkeleton(this.world); break;
+				case SPIDER: entity = new EntitySpider(this.world); break;
+				case WITCH: entity = (this.getRNG().nextBoolean() ? new EntityHallowitch(this.world) : new EntityWitch(this.world)); break;
+				case ZOMBIE: entity = new EntityZombie(this.world); break;
 			}
-			mob.setPosition(this.posX, this.posY, this.posZ);
-			this.world.spawnEntity(mob);
+			entity.setPosition(this.posX, this.posY, this.posZ);
+			entity.setAttackTarget(player);
+			this.world.spawnEntity(entity);
 		}
 		super.onDeath(damageSource);
 	}
@@ -212,12 +220,12 @@ public class EntityTreater extends EntityAnimal
 					if (stack.getItem() == ModItems.MEGA_CANDY)
 					{
 						this.chatItUp(player, EnumTreaterMessage.SUPERING);
-						// TODO thankyou items for mega candy
+						dropThankItem(player, true);
 					}
 					else
 					{
 						this.chatItUp(player, EnumTreaterMessage.THANKING);
-						this.dropThankItem(player);
+						this.dropThankItem(player, false);
 					}
 				}
 			}
@@ -301,17 +309,62 @@ public class EntityTreater extends EntityAnimal
 	 * Drop items from the loot table of the entity this Treater is costumed as.
 	 * Used to give "thankyou" items to players who give Treaters candy.
 	 */
-	private void dropThankItem(EntityPlayer player)
+	private void dropThankItem(EntityPlayer player, boolean superThank)
 	{
 		if (!this.world.isRemote)
 		{
-			LootTable lootTable = this.world.getLootTableManager().getLootTableFromLocation(this.getTreaterType().getLootTable());
-			LootContext.Builder builder = new LootContext.Builder((WorldServer)this.world)
-				.withLootedEntity(this).withDamageSource(DamageSource.generic).withPlayer(player).withLuck(player.getLuck());
+			// 5% chance of dropping a mob head if thanking for a mega candy
+			boolean dropHead = (superThank && this.rand.nextFloat() <= 0.05F);
 
-			for (ItemStack stack : lootTable.generateLootForPools(this.rand, builder.build()))
+			// if not dropping a head...
+			if (!dropHead)
 			{
-				InventoryHelper.spawnItemStack(this.world, this.posX, this.posY, this.posZ, stack);
+				// get the loot table for the appropriate mob for this treater type
+				LootTable lootTable = this.world.getLootTableManager().getLootTableFromLocation(this.getTreaterType().getLootTable());
+
+				// generate loot from the loot table
+				LootContext.Builder builder = new LootContext.Builder((WorldServer)this.world)
+					.withLootedEntity(this).withDamageSource(DamageSource.generic).withPlayer(player).withLuck(player.getLuck());
+				List<ItemStack> loot = lootTable.generateLootForPools(this.rand, builder.build());
+
+				// if not thanking for a mega candy...
+				if (!superThank)
+				{
+					// spawn a random stack from the generated loot in the world
+					InventoryHelper.spawnItemStack(this.world, this.posX, this.posY, this.posZ, loot.get(this.rand.nextInt(loot.size())));
+				}
+				// if thanking for a mega candy...
+				else
+				{
+					// spawn each stack from the generated loot in the world
+					for (ItemStack stack : loot)
+					{
+						InventoryHelper.spawnItemStack(this.world, this.posX, this.posY, this.posZ, stack);
+					}
+				}
+			}
+			// if dropping a head...
+			else
+			{
+				try
+				{
+					// create an itemstack for the mob head
+					ItemStack stack = new ItemStack(Items.SKULL, 1);
+
+					// set the damage value and nbt data for the stack depending on the treater type
+					switch (this.getTreaterType())
+					{
+						case CREEPER: stack.setItemDamage(4); break;
+						case SKELETON: stack.setItemDamage(0); break;
+						case SPIDER: stack.setItemDamage(3); stack.setTagCompound(JsonToNBT.getTagFromJson("{SkullOwner:MHF_Spider}")); break;
+						case WITCH: stack.setItemDamage(3); stack.setTagCompound(JsonToNBT.getTagFromJson("{SkullOwner:MHF_Witch}")); break;
+						case ZOMBIE: stack.setItemDamage(2); break;
+					}
+
+					// spawn the stack in the world
+					InventoryHelper.spawnItemStack(this.world, this.posX, this.posY, this.posZ, stack);
+				}
+				catch (NBTException e) { }
 			}
 		}
 	}

@@ -13,6 +13,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 
 @Mod(modid = HalloweenMod.MODID, name = HalloweenMod.NAME, version = HalloweenMod.VERSION, updateJSON = HalloweenMod.UPDATEJSON)
@@ -34,6 +36,7 @@ public class HalloweenMod
 	public static CommonProxy proxy;
 
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
+	public static final SimpleNetworkWrapper NETWORK = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
 
 
 	@EventHandler

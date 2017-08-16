@@ -3,6 +3,7 @@ package net.crazysnailboy.mods.halloween.entity.effect;
 import java.util.List;
 import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
+import net.crazysnailboy.mods.halloween.entity.monster.EntityHaunter;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -39,7 +40,7 @@ public class EntityGhastCurse extends EntityCurse
 				@Override
 				public boolean apply(@Nullable EntityLiving entity)
 				{
-					return (entity instanceof IMob);
+					return (entity instanceof IMob) && !(entity instanceof EntityHaunter);
 				}
 			});
 

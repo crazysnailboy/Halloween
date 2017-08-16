@@ -3,7 +3,8 @@ package net.crazysnailboy.mods.halloween.util;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
+import com.google.common.base.Predicate;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -14,9 +15,8 @@ import net.minecraft.world.World;
 public class WorldUtils
 {
 
-	public static <T extends Entity> T getClosestEntity(final World world, final Class<? extends T> classEntity, final BlockPos pos, double distance)
+	private static <T extends Entity> T getClosestEntity(List<T> entities, final BlockPos pos)
 	{
-		List<T> entities = world.getEntitiesWithinAABB(classEntity, new AxisAlignedBB(pos).expand(distance, distance, distance));
 		if (!entities.isEmpty())
 		{
 			Collections.sort(entities, new Comparator<T>()
@@ -34,28 +34,43 @@ public class WorldUtils
 		return null;
 	}
 
-	public static Entity getEntityByUUID(World world, UUID uuid)
+	private static <T extends Entity> T getRandomEntity(List<T> entities, final BlockPos pos)
 	{
-		for ( Entity entity : world.loadedEntityList)
+		if (!entities.isEmpty())
 		{
-			if (uuid.equals(entity.getUniqueID()))
-			{
-				return entity;
-			}
+			return entities.get(new Random().nextInt(entities.size()));
 		}
 		return null;
 	}
 
-	public static <T extends Entity> T getEntityByUUID(World world, Class<? extends T> classEntity, UUID uuid)
+
+	public static <T extends Entity> T getClosestEntity(final World world, final Class<? extends T> classEntity, final AxisAlignedBB aabb, Predicate<? super T> filter)
 	{
-		for ( T entity : world.getEntities(classEntity, EntitySelectors.IS_ALIVE))
-		{
-			if (uuid.equals(entity.getUniqueID()))
-			{
-				return entity;
-			}
-		}
-		return null;
+		List<T> entities = world.getEntitiesWithinAABB(classEntity, aabb, filter);
+		return getClosestEntity(entities, new BlockPos(aabb.minX + (aabb.maxX - aabb.minX) * 0.5D, aabb.minY + (aabb.maxY - aabb.minY) * 0.5D, aabb.minZ + (aabb.maxZ - aabb.minZ) * 0.5D));
+	}
+
+	public static <T extends Entity> T getClosestEntity(final World world, final Class<? extends T> classEntity, final BlockPos pos, double distance, Predicate<? super T> filter)
+	{
+		List<T> entities = world.getEntitiesWithinAABB(classEntity, new AxisAlignedBB(pos).expand(distance, distance, distance), filter);
+		return getClosestEntity(entities, pos);
+	}
+
+	public static <T extends Entity> T getClosestEntity(final World world, final Class<? extends T> classEntity, final BlockPos pos, double distance)
+	{
+		return getClosestEntity(world, classEntity, pos, distance, EntitySelectors.NOT_SPECTATING);
+	}
+
+	public static <T extends Entity> T getClosestEntity(final World world, final Class<? extends T> classEntity, final AxisAlignedBB aabb)
+	{
+		return getClosestEntity(world, classEntity, aabb, EntitySelectors.NOT_SPECTATING);
+	}
+
+
+	public static <T extends Entity> T getRandomEntity(final World world, final Class<? extends T> classEntity, final BlockPos pos, double distance, Predicate<? super T> filter)
+	{
+		List<T> entities = world.getEntitiesWithinAABB(classEntity, new AxisAlignedBB(pos).expand(distance, distance, distance), filter);
+		return getRandomEntity(entities, pos);
 	}
 
 }

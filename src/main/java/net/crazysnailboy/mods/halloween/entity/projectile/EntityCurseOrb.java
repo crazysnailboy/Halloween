@@ -9,6 +9,7 @@ import net.crazysnailboy.mods.halloween.entity.effect.EntitySlimeCurse;
 import net.crazysnailboy.mods.halloween.entity.effect.EntitySpiderCurse;
 import net.crazysnailboy.mods.halloween.entity.effect.EntityZombieCurse;
 import net.crazysnailboy.mods.halloween.entity.monster.EntityHallowitch;
+import net.crazysnailboy.mods.halloween.entity.monster.EntityHaunter;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
@@ -45,13 +46,14 @@ public class EntityCurseOrb extends EntityThrowable
 	{
 		if (!this.world.isRemote)
 		{
-			if (result.entityHit != null && result.entityHit instanceof EntityLivingBase)
+			// if the curse orb hit a living entity which is not a haunter...
+			if (result.entityHit != null && result.entityHit instanceof EntityLivingBase && !(result.entityHit instanceof EntityHaunter))
 			{
+				// create and spawn a random curse, with the entity which was hit as the curse's victim
 				EntityLivingBase victim = (EntityLivingBase)result.entityHit;
 				EntityCurse curse = null;
 
-				EnumCurseType curseType = EnumCurseType.getRandom();
-				switch (curseType)
+				switch (EnumCurseType.getRandom())
 				{
 					case CREEPER: curse = new EntityCreeperCurse(this.world, victim); break;
 					case GHAST: curse = new EntityGhastCurse(this.world, victim); break;
@@ -62,14 +64,17 @@ public class EntityCurseOrb extends EntityThrowable
 				}
 				this.world.spawnEntity(curse);
 
+				// if the curse orb was thrown by a witch...
 				if (this.getThrower() instanceof EntityHallowitch)
 				{
+					// make the witch disappear in a puff of particles
 					EntityHallowitch witch = (EntityHallowitch)this.getThrower();
-					witch.setDead();
+					witch.onKillCommand();
 					witch.spawnExplosionParticle();
 				}
 			}
 
+			// kill the curse orb
 			this.setDead();
 		}
 	}

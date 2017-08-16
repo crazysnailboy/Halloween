@@ -38,6 +38,18 @@ public class EntityZombieHands extends EntityZombie
 	}
 
 
+	/**
+	 * Overridden to call {@link EntityZombie#setChild(boolean)} to force all ZombieHands to be adults
+	 */
+	@Override
+	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
+	{
+		super.onInitialSpawn(difficulty, livingdata);
+		this.setChild(false);
+		return livingdata;
+	}
+
+
 	@Override
 	public void onLivingUpdate()
 	{
@@ -153,17 +165,6 @@ public class EntityZombieHands extends EntityZombie
 		super.readEntityFromNBT(compound);
 		this.hideWithMe = compound.getBoolean("HideWithMe");
 		this.setChild(false);
-	}
-
-	/**
-	 * Overridden to call {@link EntityZombie#setChild(boolean)} to force all ZombieHands to be adults
-	 */
-	@Override
-	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
-	{
-		super.onInitialSpawn(difficulty, livingdata);
-		this.setChild(false);
-		return livingdata;
 	}
 
 	@Override
