@@ -59,7 +59,7 @@ public class EntityZombieCurse extends EntityCurse
 
 	private boolean legacyMode()
 	{
-		return (ModConfiguration.legacyMode && this.victim instanceof EntityPlayer);
+		return (ModConfiguration.legacyMode || !(this.victim instanceof EntityPlayer));
 	}
 
 	/**

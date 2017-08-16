@@ -22,8 +22,6 @@ import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.WorldEntitySpawner;
@@ -162,7 +160,7 @@ public class EntityAIHaunter
 				{
 					if (this.initializeDrone(this.currentDrone))
 					{
-						this.currentDrone.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 300, 0));
+//						this.currentDrone.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 300, 0));
 						this.droneAge = 0;
 					}
 				}

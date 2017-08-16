@@ -4,6 +4,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
+import net.crazysnailboy.mods.halloween.network.datasync.ModDataSerializers;
 import net.crazysnailboy.mods.halloween.util.BlockUtils;
 import net.crazysnailboy.mods.halloween.util.EntityUtils;
 import net.minecraft.block.Block;
@@ -12,18 +13,27 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.entity.monster.EntityHusk;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeDesert;
 
 
 public class EntityZombieHands extends EntityZombie
 {
+
+	private static final DataParameter<ZombieType> ZOMBIE_TYPE = EntityDataManager.<ZombieType>createKey(EntityZombieHands.class, ModDataSerializers.ZOMBIE_TYPE);
 
 	private int jackson, entCount;
 	private boolean hideWithMe;
@@ -38,14 +48,30 @@ public class EntityZombieHands extends EntityZombie
 	}
 
 
+	@Override
+	protected void entityInit()
+	{
+		super.entityInit();
+		this.dataManager.register(ZOMBIE_TYPE, ZombieType.NORMAL);
+	}
+
 	/**
-	 * Overridden to call {@link EntityZombie#setChild(boolean)} to force all ZombieHands to be adults
+	 * Overridden to call {@link EntityZombie#setChild(boolean)} to force all ZombieHands to be adults, and to create HuskHands in desert biomes
 	 */
 	@Override
 	public IEntityLivingData onInitialSpawn(DifficultyInstance difficulty, @Nullable IEntityLivingData livingdata)
 	{
 		super.onInitialSpawn(difficulty, livingdata);
 		this.setChild(false);
+
+		// *** logic copied from 1.10 implementation of EntityZombie
+		Biome biome = this.world.getBiome(new BlockPos(this));
+		if (biome instanceof BiomeDesert && this.world.canSeeSky(new BlockPos(this)) && this.rand.nextInt(5) != 0)
+		{
+			this.setZombieType(ZombieType.HUSK);
+		}
+		// *** logic copied from 1.10 implementation of EntityZombie
+
 		return livingdata;
 	}
 
@@ -154,6 +180,7 @@ public class EntityZombieHands extends EntityZombie
 	{
 		super.writeEntityToNBT(compound);
 		compound.setBoolean("HideWithMe", this.hideWithMe);
+		compound.setInteger("ZombieType", this.getDataManager().get(ZOMBIE_TYPE).ordinal());
 	}
 
 	@Override
@@ -162,6 +189,7 @@ public class EntityZombieHands extends EntityZombie
 		super.readEntityFromNBT(compound);
 		this.hideWithMe = compound.getBoolean("HideWithMe");
 		this.setChild(false);
+		if (compound.hasKey("ZombieType")) this.dataManager.set(ZOMBIE_TYPE, ZombieType.values()[compound.getInteger("ZombieType")]);
 	}
 
 	@Override
@@ -171,9 +199,27 @@ public class EntityZombieHands extends EntityZombie
 	}
 
 	@Override
+	protected SoundEvent getAmbientSound()
+	{
+		return (this.getZombieType() == ZombieType.NORMAL ? SoundEvents.ENTITY_ZOMBIE_AMBIENT : SoundEvents.ENTITY_HUSK_AMBIENT);
+	}
+
+	@Override
+	protected SoundEvent getHurtSound(DamageSource source)
+	{
+		return (this.getZombieType() == ZombieType.NORMAL ? SoundEvents.ENTITY_ZOMBIE_HURT : SoundEvents.ENTITY_HUSK_HURT);
+	}
+
+	@Override
 	protected SoundEvent getDeathSound()
 	{
 		return null;
+	}
+
+	@Override
+	protected SoundEvent getStepSound()
+	{
+		return (this.getZombieType() == ZombieType.NORMAL ? SoundEvents.ENTITY_ZOMBIE_STEP : SoundEvents.ENTITY_HUSK_STEP);
 	}
 
 	@Override
@@ -212,10 +258,26 @@ public class EntityZombieHands extends EntityZombie
 		return false;
 	}
 
+	@Override
+	protected boolean shouldBurnInDay()
+	{
+		return (this.getZombieType() == ZombieType.NORMAL);
+	}
+
+
+	public ZombieType getZombieType()
+	{
+		return this.dataManager.get(ZOMBIE_TYPE);
+	}
+
+	public void setZombieType(ZombieType value)
+	{
+		this.dataManager.set(ZOMBIE_TYPE, value);
+	}
 
 	private EntityZombie unearthMe()
 	{
-		EntityZombie zombie = new EntityZombie(this.world);
+		EntityZombie zombie = (this.getZombieType() == ZombieType.NORMAL ? new EntityZombie(this.world) : new EntityHusk(this.world));
 		zombie.renderYawOffset = this.renderYawOffset;
 		zombie.prevRotationPitch = zombie.rotationPitch = this.rotationPitch;
 		zombie.prevRotationYaw = zombie.rotationYaw = this.rotationYaw;
@@ -241,6 +303,7 @@ public class EntityZombieHands extends EntityZombie
 		entity.setHealth(zombie.getHealth());
 		entity.setFire(EntityUtils.getFire(zombie));
 		entity.setAttackTarget(zombie.getAttackTarget());
+		entity.setZombieType(zombie instanceof EntityHusk ? ZombieType.HUSK : ZombieType.NORMAL);
 
 		zombie.setDead();
 		entity.springEffect();
@@ -272,6 +335,13 @@ public class EntityZombieHands extends EntityZombie
 //				ModLoader.getMinecraftInstance().effectRenderer.addEffect(gordon);
 			}
 		}
+	}
+
+
+	public enum ZombieType
+	{
+		NORMAL,
+		HUSK
 	}
 
 }

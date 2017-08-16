@@ -7,6 +7,7 @@ import net.crazysnailboy.mods.halloween.init.ModLootTables;
 import net.crazysnailboy.mods.halloween.util.EntityUtils;
 import net.crazysnailboy.mods.halloween.util.ReflectionUtils;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -181,7 +182,7 @@ public class EntityJumpkin extends EntitySlime
 	@Override
 	public boolean getCanSpawnHere()
 	{
-		return EntityUtils.getCanMobSpawnHere(this);
+		return this.world.getBlockState(this.getPosition().down()) == Material.GRASS && EntityUtils.getCanMobSpawnHere(this);
 
 //		BlockPos pos = new BlockPos(this.posX, this.getEntityBoundingBox().minY, this.posZ);
 //

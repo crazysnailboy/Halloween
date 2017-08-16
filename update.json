@@ -1,18 +1,19 @@
 {
 	"homepage": "https://github.com/crazysnailboy/Halloween/releases",
 	"promos": {
-		"1.12.1-latest": "0.1.7",
-		"1.12.1-recommended": "0.1.7",
-		"1.12-latest": "0.1.7",
-		"1.12-recommended": "0.1.7",
-		"1.11.2-latest": "0.1.7",
-		"1.11.2-recommended": "0.1.7",
-		"1.11-latest": "0.1.7",
-		"1.11-recommended": "0.1.7",
-		"1.10.2-latest": "0.1.7",
-		"1.10.2-recommended": "0.1.7"
+		"1.12.1-latest": "0.1.8",
+		"1.12.1-recommended": "0.1.8",
+		"1.12-latest": "0.1.8",
+		"1.12-recommended": "0.1.8",
+		"1.11.2-latest": "0.1.8",
+		"1.11.2-recommended": "0.1.8",
+		"1.11-latest": "0.1.8",
+		"1.11-recommended": "0.1.8",
+		"1.10.2-latest": "0.1.8",
+		"1.10.2-recommended": "0.1.8"
 	},
 	"1.12.1": {
+		"0.1.8": "husk hands and other tweaks",
 		"0.1.7": "various mob and ai changes, other tweaks",
 		"0.1.6": "more changes to curses, improved treater ai, bug fixes",
 		"0.1.5": "entity & curse changes, some config",
@@ -23,6 +24,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.12": {
+		"0.1.8": "husk hands and other tweaks",
 		"0.1.7": "various mob and ai changes, other tweaks",
 		"0.1.6": "more changes to curses, improved treater ai, bug fixes",
 		"0.1.5": "entity & curse changes, some config",
@@ -33,6 +35,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.11.2": {
+		"0.1.8": "husk hands and other tweaks",
 		"0.1.7": "various mob and ai changes, other tweaks",
 		"0.1.6": "more changes to curses, improved treater ai, bug fixes",
 		"0.1.5": "entity & curse changes, some config",
@@ -43,6 +46,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.11": {
+		"0.1.8": "husk hands and other tweaks",
 		"0.1.7": "various mob and ai changes, other tweaks",
 		"0.1.6": "more changes to curses, improved treater ai, bug fixes",
 		"0.1.5": "entity & curse changes, some config",
@@ -53,6 +57,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.10.2": {
+		"0.1.8": "husk hands and other tweaks",
 		"0.1.7": "various mob and ai changes, other tweaks",
 		"0.1.6": "more changes to curses, improved treater ai, bug fixes",
 		"0.1.5": "entity & curse changes, some config",
