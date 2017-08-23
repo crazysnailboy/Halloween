@@ -1,17 +1,19 @@
 package net.crazysnailboy.mods.halloween.entity.monster;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
 import net.crazysnailboy.mods.halloween.network.datasync.ModDataSerializers;
 import net.crazysnailboy.mods.halloween.util.BlockUtils;
-import net.crazysnailboy.mods.halloween.util.EntityUtils;
+import net.crazysnailboy.mods.halloween.util.ReflectionUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.monster.EntityHusk;
 import net.minecraft.entity.monster.EntityZombie;
@@ -32,6 +34,8 @@ import net.minecraft.world.biome.BiomeDesert;
 
 public class EntityZombieHands extends EntityZombie
 {
+
+	private static final Field entityFire = ReflectionUtils.getDeclaredField(Entity.class, "fire", "field_190534_ay");
 
 	private static final DataParameter<ZombieType> ZOMBIE_TYPE = EntityDataManager.<ZombieType>createKey(EntityZombieHands.class, ModDataSerializers.ZOMBIE_TYPE);
 
@@ -283,7 +287,7 @@ public class EntityZombieHands extends EntityZombie
 		zombie.prevRotationYaw = zombie.rotationYaw = this.rotationYaw;
 		zombie.setPosition(this.posX, this.posY, this.posZ);
 		zombie.setHealth(this.getHealth());
-		zombie.setFire(EntityUtils.getFire(this));
+		zombie.setFire((Integer)ReflectionUtils.getFieldValue(entityFire, this));
 		zombie.setAttackTarget(this.getAttackTarget());
 
 		this.springEffect();
@@ -301,7 +305,7 @@ public class EntityZombieHands extends EntityZombie
 		entity.prevRotationYaw = entity.rotationYaw = zombie.rotationYaw;
 		entity.setPosition(zombie.posX, zombie.posY, zombie.posZ);
 		entity.setHealth(zombie.getHealth());
-		entity.setFire(EntityUtils.getFire(zombie));
+		entity.setFire((Integer)ReflectionUtils.getFieldValue(entityFire, zombie));
 		entity.setAttackTarget(zombie.getAttackTarget());
 		entity.setZombieType(zombie instanceof EntityHusk ? ZombieType.HUSK : ZombieType.NORMAL);
 
@@ -335,13 +339,6 @@ public class EntityZombieHands extends EntityZombie
 //				ModLoader.getMinecraftInstance().effectRenderer.addEffect(gordon);
 			}
 		}
-	}
-
-
-	public enum ZombieType
-	{
-		NORMAL,
-		HUSK
 	}
 
 }

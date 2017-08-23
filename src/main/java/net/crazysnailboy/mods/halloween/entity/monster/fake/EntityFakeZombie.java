@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 
 
 /**
- * A "fake" zombie. Created by {@link EntityHaunter} during it's attack.
+ * A "fake" {@link EntityZombie}. Created by {@link EntityHaunter} during it's attack.
  *
  */
 public class EntityFakeZombie extends EntityZombie implements IFakeMonster
@@ -27,6 +27,13 @@ public class EntityFakeZombie extends EntityZombie implements IFakeMonster
 		super(world);
 	}
 
+
+	@Override
+	protected void applyEntityAttributes()
+	{
+		super.applyEntityAttributes();
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1.0D);
+	}
 
 	@Override
 	public void onUpdate()
@@ -77,14 +84,6 @@ public class EntityFakeZombie extends EntityZombie implements IFakeMonster
 	protected ResourceLocation getLootTable()
 	{
 		return null;
-	}
-
-
-	@Override
-	protected void applyEntityAttributes()
-	{
-		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1.0D);
 	}
 
 }

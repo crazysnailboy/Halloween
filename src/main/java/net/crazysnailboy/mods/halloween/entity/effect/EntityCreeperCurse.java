@@ -36,8 +36,11 @@ public class EntityCreeperCurse extends EntityCurse
 				}
 				else if (this.swell >= 28)
 				{
-					this.world.createExplosion(this, this.posX, this.posY - 1.0D, this.posZ, 3.0F, this.world.getGameRules().getBoolean("mobGriefing"));
-					this.setDead();
+					if (!this.world.isRemote)
+					{
+						this.world.createExplosion(this, this.posX, this.posY - 1.0D, this.posZ, 3.0F, this.world.getGameRules().getBoolean("mobGriefing"));
+						this.setDead();
+					}
 				}
 			}
 		}

@@ -218,17 +218,13 @@ public class EntityAITreater
 			this.taskOwner = taskOwner;
 		}
 
+
 		@Override
 		public void startExecuting()
 		{
 			super.startExecuting();
-			this.greetPlayer();
-		}
 
-
-		private void greetPlayer()
-		{
-			if (this.closestEntity != null)
+			if (!this.taskOwner.isInLove() && this.closestEntity != null)
 			{
 				EntityPlayer closestPlayer = (EntityPlayer)this.closestEntity;
 				this.taskOwner.chatItUp(closestPlayer, EnumTreaterMessage.GREETING);

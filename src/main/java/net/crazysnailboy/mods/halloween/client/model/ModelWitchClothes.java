@@ -4,8 +4,11 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 
+@SideOnly(Side.CLIENT)
 public class ModelWitchClothes extends ModelBiped
 {
 
@@ -24,12 +27,12 @@ public class ModelWitchClothes extends ModelBiped
 		this(0.0F, 0.0F, 64, 32);
 	}
 
-	public ModelWitchClothes(float modelSize, float p_i1149_2_, int textureWidthIn, int textureHeightIn)
+	public ModelWitchClothes(float modelSize, float p_i1149_2_, int textureWidth, int textureHeight)
 	{
 		this.leftArmPose = ModelBiped.ArmPose.EMPTY;
 		this.rightArmPose = ModelBiped.ArmPose.EMPTY;
-		this.textureWidth = textureWidthIn;
-		this.textureHeight = textureHeightIn;
+		this.textureWidth = textureWidth;
+		this.textureHeight = textureHeight;
 
 
 		this.bipedHat = new ModelRendererPyramid(this, 0, 14);
@@ -37,7 +40,7 @@ public class ModelWitchClothes extends ModelBiped
 		this.bipedHat.setRotationPoint(0.0F, 0.0F + p_i1149_2_, 0.0F);
 
 		this.bipedHeadwear = new ModelRenderer(this, 28, 21);
-		this.bipedHeadwear.addBox(-5.5F, -7F, -6.25F, 11, 1, 11, modelSize);
+		this.bipedHeadwear.addBox(-5.5F, -7.0F, -6.25F, 11, 1, 11, modelSize);
 		this.bipedHeadwear.setRotationPoint(0.0F, 0.0F + p_i1149_2_, 0.0F);
 
 		this.bipedCoat1 = new ModelRendererPyramid(this, 0, 5);
@@ -49,20 +52,20 @@ public class ModelWitchClothes extends ModelBiped
 		this.bipedCoat2.setRotationPoint(0.0F, 0.0F + p_i1149_2_, 0.0F);
 
 		this.bipedRightArm = new ModelRenderer(this, 1, 14);
-		this.bipedRightArm.addBox(-3F, -2F, -2F, 4, 4, 4, modelSize + 0.375F);
-		this.bipedRightArm.setRotationPoint(-5F, 2.0F + p_i1149_2_, 0.0F);
+		this.bipedRightArm.addBox(-3.0F, -2.0F, -2.0F, 4, 4, 4, modelSize + 0.375F);
+		this.bipedRightArm.setRotationPoint(-5.0F, 2.0F + p_i1149_2_, 0.0F);
 
 		this.bipedLeftArm = new ModelRenderer(this, 1, 14);
 		this.bipedLeftArm.mirror = true;
-		this.bipedLeftArm.addBox(-1F, -2F, -2F, 4, 4, 4, modelSize + 0.375F);
-		this.bipedLeftArm.setRotationPoint(5F, 2.0F + p_i1149_2_, 0.0F);
+		this.bipedLeftArm.addBox(-1.0F, -2.0F, -2.0F, 4, 4, 4, modelSize + 0.375F);
+		this.bipedLeftArm.setRotationPoint(5.0F, 2.0F + p_i1149_2_, 0.0F);
 
 		this.bipedCross1 = new ModelRenderer(this, 28, 21);
-		this.bipedCross1.addBox(-1.125F, 3F, -4F, 4, 1, 1, modelSize - 0.3F);
+		this.bipedCross1.addBox(-1.125F, 3.0F, -4F, 4, 1, 1, modelSize - 0.3F);
 		this.bipedCross1.setRotationPoint(0.0F, 0.0F + p_i1149_2_, 0.0F);
 
 		this.bipedCross2 = new ModelRenderer(this, 28, 21);
-		this.bipedCross2.addBox(-3.0F, 3F, -4F, 4, 1, 1, modelSize - 0.3F);
+		this.bipedCross2.addBox(-3.0F, 3.0F, -4.0F, 4, 1, 1, modelSize - 0.3F);
 		this.bipedCross2.setRotationPoint(0.0F, 0.0F + p_i1149_2_, 0.0F);
 	}
 
@@ -113,10 +116,10 @@ public class ModelWitchClothes extends ModelBiped
 		{
 			float f6 = this.onGround;
 			this.bipedCross1.rotateAngleY = this.bipedCross2.rotateAngleY = this.bipedCoat2.rotateAngleY = this.bipedCoat1.rotateAngleY = MathHelper.sin(MathHelper.sqrt(f6) * 3.141593F * 2.0F) * 0.2F;
-			this.bipedRightArm.rotationPointZ = MathHelper.sin(this.bipedCoat1.rotateAngleY) * 5F;
-			this.bipedRightArm.rotationPointX = -MathHelper.cos(this.bipedCoat1.rotateAngleY) * 5F;
-			this.bipedLeftArm.rotationPointZ = -MathHelper.sin(this.bipedCoat1.rotateAngleY) * 5F;
-			this.bipedLeftArm.rotationPointX = MathHelper.cos(this.bipedCoat1.rotateAngleY) * 5F;
+			this.bipedRightArm.rotationPointZ = MathHelper.sin(this.bipedCoat1.rotateAngleY) * 5.0F;
+			this.bipedRightArm.rotationPointX = -MathHelper.cos(this.bipedCoat1.rotateAngleY) * 5.0F;
+			this.bipedLeftArm.rotationPointZ = -MathHelper.sin(this.bipedCoat1.rotateAngleY) * 5.0F;
+			this.bipedLeftArm.rotationPointX = MathHelper.cos(this.bipedCoat1.rotateAngleY) * 5.0F;
 			this.bipedRightArm.rotateAngleY += this.bipedCoat1.rotateAngleY;
 			this.bipedLeftArm.rotateAngleY += this.bipedCoat1.rotateAngleY;
 			this.bipedLeftArm.rotateAngleX += this.bipedCoat1.rotateAngleY;

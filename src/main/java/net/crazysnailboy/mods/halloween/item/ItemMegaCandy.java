@@ -13,7 +13,7 @@ public class ItemMegaCandy extends ItemFood
 
 	public ItemMegaCandy()
 	{
-		super(10, 0.3F, false);
+		super(10, 0.6F, false);
 		this.setAlwaysEdible();
 	}
 

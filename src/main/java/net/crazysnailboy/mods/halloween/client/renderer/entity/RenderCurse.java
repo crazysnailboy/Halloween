@@ -147,5 +147,4 @@ public class RenderCurse extends Render<EntityCurse>
 		}
 	}
 
-
 }

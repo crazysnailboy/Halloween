@@ -34,6 +34,7 @@ public class EntityFakeArrow extends EntityArrow
 		this.setDamage(0.0D);
 	}
 
+
 	@Override
 	protected ItemStack getArrowStack()
 	{
@@ -41,7 +42,7 @@ public class EntityFakeArrow extends EntityArrow
 	}
 
 	@Override
-	protected void onHit(RayTraceResult raytraceResultIn)
+	protected void onHit(RayTraceResult result)
 	{
 		this.playSound(SoundEvents.ENTITY_ARROW_HIT, 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
 		this.setDead();

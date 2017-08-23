@@ -11,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+
 @SideOnly(Side.CLIENT)
 public class LayerTreaterCreeper<T extends ModelBase> implements LayerRenderer<EntityTreater>
 {
@@ -19,20 +20,22 @@ public class LayerTreaterCreeper<T extends ModelBase> implements LayerRenderer<E
 	private final ModelTreaterCreeper model = new ModelTreaterCreeper(0.25F, 0F);
 	private final RenderTreater renderEntity;
 
-    public LayerTreaterCreeper(RenderTreater renderEntity)
-    {
-    	this.renderEntity = renderEntity;
-    }
+
+	public LayerTreaterCreeper(RenderTreater renderEntity)
+	{
+		this.renderEntity = renderEntity;
+	}
+
 
 	@Override
 	public void doRenderLayer(EntityTreater entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scale)
 	{
-        this.renderEntity.bindTexture(TEXTURE_COSTUME);
+		this.renderEntity.bindTexture(TEXTURE_COSTUME);
 
-        GlStateManager.pushMatrix();
-        this.model.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
+		GlStateManager.pushMatrix();
+		this.model.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
 		this.model.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale);
-        GlStateManager.popMatrix();
+		GlStateManager.popMatrix();
 
 	}
 

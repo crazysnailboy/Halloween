@@ -6,6 +6,7 @@ import net.crazysnailboy.mods.halloween.init.ModEntities;
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
 import net.minecraftforge.fml.relauncher.Side;
 
+
 public class CommonProxy
 {
 

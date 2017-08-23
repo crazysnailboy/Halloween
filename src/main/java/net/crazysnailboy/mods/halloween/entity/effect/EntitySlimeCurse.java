@@ -19,6 +19,7 @@ public class EntitySlimeCurse extends EntityCurse
 
 	private EventHandlers eventHandlers = null;
 
+
 	public EntitySlimeCurse(World world)
 	{
 		this(world, null);

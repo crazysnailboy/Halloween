@@ -2,7 +2,7 @@ package net.crazysnailboy.mods.halloween.network.datasync;
 
 import java.io.IOException;
 import net.crazysnailboy.mods.halloween.entity.monster.EntityHaunter.EnumTransparencyState;
-import net.crazysnailboy.mods.halloween.entity.monster.EntityZombieHands;
+import net.crazysnailboy.mods.halloween.entity.monster.ZombieType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializer;
@@ -14,12 +14,15 @@ public class ModDataSerializers
 
 	public static class EnumDataSerializer<T extends Enum> implements DataSerializer<T>
 	{
+
 		private final Class<T> enumClass;
+
 
 		public EnumDataSerializer(Class<T> enumClass)
 		{
 			this.enumClass = enumClass;
 		}
+
 
 		@Override
 		public void write(PacketBuffer buf, T value)
@@ -48,7 +51,7 @@ public class ModDataSerializers
 
 
 	public static final DataSerializer<EnumTransparencyState> HAUNTER_TRANSPARENCY = new EnumDataSerializer<EnumTransparencyState>(EnumTransparencyState.class);
-	public static final DataSerializer<EntityZombieHands.ZombieType> ZOMBIE_TYPE = new EnumDataSerializer<EntityZombieHands.ZombieType>(EntityZombieHands.ZombieType.class);
+	public static final DataSerializer<ZombieType> ZOMBIE_TYPE = new EnumDataSerializer<ZombieType>(ZombieType.class);
 
 
 	static

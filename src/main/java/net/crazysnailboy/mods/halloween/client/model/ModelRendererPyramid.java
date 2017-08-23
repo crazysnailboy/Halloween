@@ -12,13 +12,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 
+@SideOnly(Side.CLIENT)
 public class ModelRendererPyramid extends ModelRenderer
 {
 
 //	public float textureWidth;
 //	public float textureHeight;
-	private PositionTextureVertex field_35978_r[];
-	private TexturedQuad faces[];
+	private PositionTextureVertex vertexPositions[];
+	private TexturedQuad quadList[];
 	private int textureOffsetX;
 	private int textureOffsetY;
 //	public float rotationPointX;
@@ -30,9 +31,9 @@ public class ModelRendererPyramid extends ModelRenderer
 //	public float offsetX;
 //	public float offsetY;
 //	public float offsetZ;
-	public float field_35973_l;
-	public float field_35974_m;
-	public float field_35972_n;
+//	private float field_35973_l;
+//	private float field_35974_m;
+//	private float field_35972_n;
 	private boolean compiled;
 	private int displayList;
 //	public boolean mirror;
@@ -70,25 +71,29 @@ public class ModelRendererPyramid extends ModelRenderer
 		this.addBox(offX, offY, offZ, width, height, depth, 0.0F, 0.0F, 0.0F);
 	}
 
-	public void addBox(float offX, float offY, float offZ, int width, int height, int depth, float f3, float carl, float sagan)
+	/**
+	 * Mostly seems to be adapted from
+	 * {@link net.minecraft.client.model.ModelBox#ModelBox(ModelRenderer, int, int, float, float, float, int, int, int, float, boolean)}
+	 */
+	public void addBox(float offX, float offY, float offZ, int width, int height, int depth, float scaleFactor, float carl, float sagan)
 	{
 		this.offsetX = offX;
 		this.offsetY = offY;
 		this.offsetZ = offZ;
-		this.field_35973_l = offX + (float)width;
-		this.field_35974_m = offY + (float)height;
-		this.field_35972_n = offZ + (float)depth;
-		this.field_35978_r = new PositionTextureVertex[8];
-		this.faces = new TexturedQuad[6];
+//		this.field_35973_l = offX + (float)width;
+//		this.field_35974_m = offY + (float)height;
+//		this.field_35972_n = offZ + (float)depth;
+		this.vertexPositions = new PositionTextureVertex[8];
+		this.quadList = new TexturedQuad[6];
 		float f4 = offX + (float)width;
 		float f5 = offY + (float)height;
 		float f6 = offZ + (float)depth;
-		offX -= f3;
-		offY -= f3;
-		offZ -= f3;
-		f4 += f3;
-		f5 += f3;
-		f6 += f3;
+		offX -= scaleFactor;
+		offY -= scaleFactor;
+		offZ -= scaleFactor;
+		f4 += scaleFactor;
+		f5 += scaleFactor;
+		f6 += scaleFactor;
 		if (this.mirror)
 		{
 			float f7 = f4;
@@ -112,86 +117,84 @@ public class ModelRendererPyramid extends ModelRenderer
 		PositionTextureVertex positiontexturevertex6 = new PositionTextureVertex(f4 + sagan, f5, f6 + sagan, 8F, 8F);
 		PositionTextureVertex positiontexturevertex7 = new PositionTextureVertex(offX - sagan, f5, f6 + sagan, 8F, 0.0F);
 
-		this.field_35978_r[0] = positiontexturevertex;
-		this.field_35978_r[1] = positiontexturevertex1;
-		this.field_35978_r[2] = positiontexturevertex2;
-		this.field_35978_r[3] = positiontexturevertex3;
-		this.field_35978_r[4] = positiontexturevertex4;
-		this.field_35978_r[5] = positiontexturevertex5;
-		this.field_35978_r[6] = positiontexturevertex6;
-		this.field_35978_r[7] = positiontexturevertex7;
+		this.vertexPositions[0] = positiontexturevertex;
+		this.vertexPositions[1] = positiontexturevertex1;
+		this.vertexPositions[2] = positiontexturevertex2;
+		this.vertexPositions[3] = positiontexturevertex3;
+		this.vertexPositions[4] = positiontexturevertex4;
+		this.vertexPositions[5] = positiontexturevertex5;
+		this.vertexPositions[6] = positiontexturevertex6;
+		this.vertexPositions[7] = positiontexturevertex7;
 
-		this.faces[0] = new TexturedQuad(new PositionTextureVertex[] {
+		this.quadList[0] = new TexturedQuad(new PositionTextureVertex[] {
 			positiontexturevertex5, positiontexturevertex1, positiontexturevertex2, positiontexturevertex6
 		}, this.textureOffsetX + depth + width, this.textureOffsetY + depth, this.textureOffsetX + depth + width + depth, this.textureOffsetY + depth + height, this.textureWidth, this.textureHeight);
-		this.faces[1] = new TexturedQuad(new PositionTextureVertex[] {
+		this.quadList[1] = new TexturedQuad(new PositionTextureVertex[] {
 			positiontexturevertex, positiontexturevertex4, positiontexturevertex7, positiontexturevertex3
 		}, this.textureOffsetX + 0, this.textureOffsetY + depth, this.textureOffsetX + depth, this.textureOffsetY + depth + height, this.textureWidth, this.textureHeight);
-		this.faces[2] = new TexturedQuad(new PositionTextureVertex[] {
+		this.quadList[2] = new TexturedQuad(new PositionTextureVertex[] {
 			positiontexturevertex5, positiontexturevertex4, positiontexturevertex, positiontexturevertex1
 		}, this.textureOffsetX + depth, this.textureOffsetY + 0, this.textureOffsetX + depth + width, this.textureOffsetY + depth, this.textureWidth, this.textureHeight);
-		this.faces[3] = new TexturedQuad(new PositionTextureVertex[] {
+		this.quadList[3] = new TexturedQuad(new PositionTextureVertex[] {
 			positiontexturevertex2, positiontexturevertex3, positiontexturevertex7, positiontexturevertex6
 		}, this.textureOffsetX + depth + width, this.textureOffsetY + 0, this.textureOffsetX + depth + width + width, this.textureOffsetY + depth, this.textureWidth, this.textureHeight);
-		this.faces[4] = new TexturedQuad(new PositionTextureVertex[] {
+		this.quadList[4] = new TexturedQuad(new PositionTextureVertex[] {
 			positiontexturevertex1, positiontexturevertex, positiontexturevertex3, positiontexturevertex2
 		}, this.textureOffsetX + depth, this.textureOffsetY + depth, this.textureOffsetX + depth + width, this.textureOffsetY + depth + height, this.textureWidth, this.textureHeight);
-		this.faces[5] = new TexturedQuad(new PositionTextureVertex[] {
+		this.quadList[5] = new TexturedQuad(new PositionTextureVertex[] {
 			positiontexturevertex4, positiontexturevertex5, positiontexturevertex6, positiontexturevertex7
 		}, this.textureOffsetX + depth + width + depth, this.textureOffsetY + depth, this.textureOffsetX + depth + width + depth + width, this.textureOffsetY + depth + height, this.textureWidth, this.textureHeight);
 		if (this.mirror)
 		{
-			for (int l = 0; l < this.faces.length; l++)
+			for (int l = 0; l < this.quadList.length; l++)
 			{
-				this.faces[l].flipFace();
+				this.quadList[l].flipFace();
 			}
 
 		}
 	}
 
 	@Override
-	public void render(float f)
+	public void render(float scale)
 	{
-		if (this.isHidden)
+		if (!this.isHidden)
 		{
-			return;
-		}
-		if (!this.showModel)
-		{
-			return;
-		}
-		if (!this.compiled)
-		{
-			this.compileDisplayList(f);
-		}
-		if (this.rotateAngleX != 0.0F || this.rotateAngleY != 0.0F || this.rotateAngleZ != 0.0F)
-		{
-			GL11.glPushMatrix();
-			GL11.glTranslatef(this.rotationPointX * f, this.rotationPointY * f, this.rotationPointZ * f);
-			if (this.rotateAngleZ != 0.0F)
+			if (this.showModel)
 			{
-				GL11.glRotatef(this.rotateAngleZ * 57.29578F, 0.0F, 0.0F, 1.0F);
+				if (!this.compiled)
+				{
+					this.compileDisplayList(scale);
+				}
+				if (this.rotateAngleX != 0.0F || this.rotateAngleY != 0.0F || this.rotateAngleZ != 0.0F)
+				{
+					GL11.glPushMatrix();
+					GL11.glTranslatef(this.rotationPointX * scale, this.rotationPointY * scale, this.rotationPointZ * scale);
+					if (this.rotateAngleZ != 0.0F)
+					{
+						GL11.glRotatef(this.rotateAngleZ * 57.29578F, 0.0F, 0.0F, 1.0F);
+					}
+					if (this.rotateAngleY != 0.0F)
+					{
+						GL11.glRotatef(this.rotateAngleY * 57.29578F, 0.0F, 1.0F, 0.0F);
+					}
+					if (this.rotateAngleX != 0.0F)
+					{
+						GL11.glRotatef(this.rotateAngleX * 57.29578F, 1.0F, 0.0F, 0.0F);
+					}
+					GL11.glCallList(this.displayList);
+					GL11.glPopMatrix();
+				}
+				else if (this.rotationPointX != 0.0F || this.rotationPointY != 0.0F || this.rotationPointZ != 0.0F)
+				{
+					GL11.glTranslatef(this.rotationPointX * scale, this.rotationPointY * scale, this.rotationPointZ * scale);
+					GL11.glCallList(this.displayList);
+					GL11.glTranslatef(-this.rotationPointX * scale, -this.rotationPointY * scale, -this.rotationPointZ * scale);
+				}
+				else
+				{
+					GL11.glCallList(this.displayList);
+				}
 			}
-			if (this.rotateAngleY != 0.0F)
-			{
-				GL11.glRotatef(this.rotateAngleY * 57.29578F, 0.0F, 1.0F, 0.0F);
-			}
-			if (this.rotateAngleX != 0.0F)
-			{
-				GL11.glRotatef(this.rotateAngleX * 57.29578F, 1.0F, 0.0F, 0.0F);
-			}
-			GL11.glCallList(this.displayList);
-			GL11.glPopMatrix();
-		}
-		else if (this.rotationPointX != 0.0F || this.rotationPointY != 0.0F || this.rotationPointZ != 0.0F)
-		{
-			GL11.glTranslatef(this.rotationPointX * f, this.rotationPointY * f, this.rotationPointZ * f);
-			GL11.glCallList(this.displayList);
-			GL11.glTranslatef(-this.rotationPointX * f, -this.rotationPointY * f, -this.rotationPointZ * f);
-		}
-		else
-		{
-			GL11.glCallList(this.displayList);
 		}
 	}
 
@@ -256,17 +259,17 @@ public class ModelRendererPyramid extends ModelRenderer
 
 					if (this.rotateAngleZ != 0.0F)
 					{
-						GL11.glRotatef(this.rotateAngleZ * (180.0F / (float)Math.PI), 0.0F, 0.0F, 1.0F);
+						GL11.glRotatef(this.rotateAngleZ * 57.29578F, 0.0F, 0.0F, 1.0F);
 					}
 
 					if (this.rotateAngleY != 0.0F)
 					{
-						GL11.glRotatef(this.rotateAngleY * (180.0F / (float)Math.PI), 0.0F, 1.0F, 0.0F);
+						GL11.glRotatef(this.rotateAngleY * 57.29578F, 0.0F, 1.0F, 0.0F);
 					}
 
 					if (this.rotateAngleX != 0.0F)
 					{
-						GL11.glRotatef(this.rotateAngleX * (180.0F / (float)Math.PI), 1.0F, 0.0F, 0.0F);
+						GL11.glRotatef(this.rotateAngleX * 57.29578F, 1.0F, 0.0F, 0.0F);
 					}
 				}
 			}
@@ -280,23 +283,23 @@ public class ModelRendererPyramid extends ModelRenderer
 		GL11.glNewList(this.displayList, GL11.GL_COMPILE);
 		BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
 
-		for (int i = 0; i < this.faces.length; i++)
+		for (int i = 0; i < this.quadList.length; i++)
 		{
-			this.faces[i].draw(bufferbuilder, scale);
+			this.quadList[i].draw(bufferbuilder, scale);
 		}
 
 		GL11.glEndList();
 		this.compiled = true;
 	}
 
-	public void func_35969_a(ModelRendererPyramid renderer)
-	{
-		this.rotationPointX = renderer.rotationPointX;
-		this.rotationPointY = renderer.rotationPointY;
-		this.rotationPointZ = renderer.rotationPointZ;
-		this.rotateAngleX = renderer.rotateAngleX;
-		this.rotateAngleY = renderer.rotateAngleY;
-		this.rotateAngleZ = renderer.rotateAngleZ;
-	}
+//	public void func_35969_a(ModelRendererPyramid renderer)
+//	{
+//		this.rotationPointX = renderer.rotationPointX;
+//		this.rotationPointY = renderer.rotationPointY;
+//		this.rotationPointZ = renderer.rotationPointZ;
+//		this.rotateAngleX = renderer.rotateAngleX;
+//		this.rotateAngleY = renderer.rotateAngleY;
+//		this.rotateAngleZ = renderer.rotateAngleZ;
+//	}
 
 }

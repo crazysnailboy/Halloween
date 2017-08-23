@@ -116,4 +116,14 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 	{
 	}
 
+
+	public void gotchaBitch(EntityLivingBase entity)
+	{
+		if (entity != null && this.getAttackTarget() != null && entity == this.getAttackTarget())
+		{
+			this.onKillCommand();
+			this.spawnExplosionParticle();
+		}
+	}
+
 }

@@ -23,6 +23,7 @@ public class ItemCurseOrb extends Item
 		this.setMaxStackSize(8);
 	}
 
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand)
 	{

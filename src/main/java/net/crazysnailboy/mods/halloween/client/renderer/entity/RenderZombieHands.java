@@ -2,12 +2,15 @@ package net.crazysnailboy.mods.halloween.client.renderer.entity;
 
 import net.crazysnailboy.mods.halloween.client.model.ModelZombieHands;
 import net.crazysnailboy.mods.halloween.entity.monster.EntityZombieHands;
-import net.crazysnailboy.mods.halloween.entity.monster.EntityZombieHands.ZombieType;
+import net.crazysnailboy.mods.halloween.entity.monster.ZombieType;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 
+@SideOnly(Side.CLIENT)
 public class RenderZombieHands extends RenderBiped<EntityZombieHands>
 {
 

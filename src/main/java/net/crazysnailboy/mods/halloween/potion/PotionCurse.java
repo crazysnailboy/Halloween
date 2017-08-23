@@ -13,10 +13,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+
 public class PotionCurse extends Potion
 {
 
 	private static final ResourceLocation ICON_TEXTURES = new ResourceLocation(HalloweenMod.MODID, "textures/gui/icons.png");
+
 
 	public PotionCurse()
 	{
@@ -27,6 +29,7 @@ public class PotionCurse extends Potion
 	{
 		super(isBadEffect, liquidColor);
 	}
+
 
 	@Override
 	public void performEffect(EntityLivingBase entity, int amplifier)

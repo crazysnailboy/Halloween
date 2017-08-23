@@ -3,8 +3,11 @@ package net.crazysnailboy.mods.halloween.client.model;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 
+@SideOnly(Side.CLIENT)
 public class ModelTreaterSpider extends ModelBiped
 {
 
@@ -63,14 +66,14 @@ public class ModelTreaterSpider extends ModelBiped
 		this.bipedRightArm2.rotateAngleZ -= 0.15F;
 		this.bipedRightArm3.rotateAngleZ -= 0.3F;
 		this.bipedRightArm2.rotateAngleX = this.bipedRightArm3.rotateAngleX = this.bipedRightArm.rotateAngleX * 0.25F;
-		this.bipedRightArm2.rotateAngleX *= -1F;
+		this.bipedRightArm2.rotateAngleX *= -1.0F;
 		this.bipedRightArm2.rotateAngleY = this.bipedRightArm3.rotateAngleY = this.bipedRightArm.rotateAngleY;
 
 		this.bipedLeftArm2.rotateAngleZ = this.bipedLeftArm3.rotateAngleZ = this.bipedLeftArm.rotateAngleZ = -1.0F;
 		this.bipedLeftArm2.rotateAngleZ += 0.15F;
 		this.bipedLeftArm3.rotateAngleZ += 0.3F;
 		this.bipedLeftArm2.rotateAngleX = this.bipedLeftArm3.rotateAngleX = this.bipedLeftArm.rotateAngleX * 0.25F;
-		this.bipedLeftArm2.rotateAngleX *= -1F;
+		this.bipedLeftArm2.rotateAngleX *= -1.0F;
 		this.bipedLeftArm2.rotateAngleY = this.bipedLeftArm3.rotateAngleY = this.bipedLeftArm.rotateAngleY;
 	}
 

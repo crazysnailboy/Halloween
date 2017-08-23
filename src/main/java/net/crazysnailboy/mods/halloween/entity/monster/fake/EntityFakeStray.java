@@ -1,12 +1,14 @@
 package net.crazysnailboy.mods.halloween.entity.monster.fake;
 
-import java.lang.reflect.Field;
 import net.crazysnailboy.mods.halloween.entity.monster.EntityHaunter;
+import net.crazysnailboy.mods.halloween.entity.projectile.fake.EntityFakeTippedArrow;
 import net.crazysnailboy.mods.halloween.init.ModSoundEvents;
-import net.crazysnailboy.mods.halloween.util.ReflectionUtils;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityStray;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.MobEffects;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -14,21 +16,18 @@ import net.minecraft.world.World;
 
 
 /**
- * A "fake" {@link EntityCreeper}. Created by {@link EntityHaunter} during it's attack.
+ * A "fake" {@link EntityStray}. Created by {@link EntityHaunter} during it's attack.
  *
  */
-public class EntityFakeCreeper extends EntityCreeper implements IFakeMonster
+public class EntityFakeStray extends EntityStray implements IFakeMonster
 {
-
-	private static final Field explosionRadius = ReflectionUtils.getDeclaredField(EntityCreeper.class, "explosionRadius", "field_82226_g");
 
 	private int suspension;
 
 
-	public EntityFakeCreeper(World world)
+	public EntityFakeStray(World world)
 	{
 		super(world);
-		this.setExplosionRadius((byte)0);
 	}
 
 
@@ -75,7 +74,6 @@ public class EntityFakeCreeper extends EntityCreeper implements IFakeMonster
 	{
 		super.readEntityFromNBT(compound);
 		suspension = compound.getShort("Suspension");
-		this.setExplosionRadius((byte)0);
 	}
 
 	@Override
@@ -84,14 +82,12 @@ public class EntityFakeCreeper extends EntityCreeper implements IFakeMonster
 		return null;
 	}
 
-
-	/**
-	 * Uses reflection to set the value of private field {@link EntityCreeper.explosionRadius}
-	 * so that the fake creeper causes no damage when it explodes.
-	 */
-	private void setExplosionRadius(byte value)
+	@Override
+	protected EntityArrow getArrow(float distanceFactor)
 	{
-		ReflectionUtils.setFieldValue(explosionRadius, this, value);
+		EntityFakeTippedArrow entitytippedarrow = new EntityFakeTippedArrow(this.world, this);
+		entitytippedarrow.addEffect(new PotionEffect(MobEffects.SLOWNESS, 600));
+		return entitytippedarrow;
 	}
 
 }
