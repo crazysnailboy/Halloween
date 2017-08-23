@@ -47,33 +47,36 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+
 public class ModEntities
 {
 
 	private static int id = 0;
 
 
+	/**
+	 * Register all the mod's entities with the Entity Registry.
+	 */
 	public static void registerEntities()
 	{
 		// hostile mobs
-		registerEntity(EntityCreeperween.class, "Creeperween", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityJumpkin.class, "Jumpkin", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityZombieHands.class, "ZombieHands", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityHallowitch.class, "Hallowitch", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityHaunter.class, "Haunter", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerLiving(EntityCreeperween.class, "Creeperween", 0x000000, 0xFFFFFF);
+		registerLiving(EntityJumpkin.class, "Jumpkin", 0x000000, 0xFFFFFF);
+		registerLiving(EntityZombieHands.class, "ZombieHands", 0x000000, 0xFFFFFF);
+		registerLiving(EntityHallowitch.class, "Hallowitch", 0x000000, 0xFFFFFF);
+		registerLiving(EntityHaunter.class, "Haunter", 0x000000, 0xFFFFFF);
 		// fake hostile mobs
-		registerEntity(EntityFakeCreeper.class, "FakeCreeper", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityFakeSkeleton.class, "FakeSkeleton", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityFakeSpider.class, "FakeSpider", 64, 3, true, 0x000000, 0xFFFFFF);
-		registerEntity(EntityFakeZombie.class, "FakeZombie", 64, 3, true, 0x000000, 0xFFFFFF);
-
+		registerLiving(EntityFakeCreeper.class, "FakeCreeper", 0x000000, 0xFFFFFF);
+		registerLiving(EntityFakeSkeleton.class, "FakeSkeleton", 0x000000, 0xFFFFFF);
+		registerLiving(EntityFakeSpider.class, "FakeSpider", 0x000000, 0xFFFFFF);
+		registerLiving(EntityFakeZombie.class, "FakeZombie", 0x000000, 0xFFFFFF);
 		// passive mobs
-		registerEntity(EntityTreater.class, "Treater", 64, 3, true, 0x000000, 0xFFFFFF);
+		registerLiving(EntityTreater.class, "Treater", 0x000000, 0xFFFFFF);
 
-		// projectiles
-		registerEntity(EntityCurseOrb.class, "CurseOrb", 64, 10, true);
+		// throwables
+		registerThrowable(EntityCurseOrb.class, "CurseOrb");
 		// fake projectiles
-		registerEntity(EntityFakeArrow.class, "FakeArrow", 64, 20, true);
+		registerProjectile(EntityFakeArrow.class, "FakeArrow");
 
 		// effects
 		registerEntity(EntityCreeperCurse.class, "CreeperCurse", 64, 3, true);
@@ -82,43 +85,49 @@ public class ModEntities
 		registerEntity(EntitySlimeCurse.class, "SlimeCurse", 64, 3, true);
 		registerEntity(EntitySpiderCurse.class, "SpiderCurse", 64, 3, true);
 		registerEntity(EntityZombieCurse.class, "ZombieCurse", 64, 3, true);
-
-
 	}
 
-	public static void addEntitySpawns()
+	private static void registerLiving(Class<? extends Entity> entityClass, String entityName, int eggPrimary, int eggSecondary)
 	{
-		Biome[] biomes = getBiomeList(EntityCreeper.class, EnumCreatureType.MONSTER);
-
-		EntityRegistry.addSpawn(EntityJumpkin.class, 100, 4, 4, EnumCreatureType.MONSTER, biomes);
-		EntityRegistry.addSpawn(EntityZombieHands.class, 100, 4, 4, EnumCreatureType.MONSTER, biomes);
-		EntityRegistry.addSpawn(EntityHallowitch.class, 75, 4, 4, EnumCreatureType.MONSTER, biomes);
-		EntityRegistry.addSpawn(EntityCreeperween.class, 75, 4, 4, EnumCreatureType.MONSTER, biomes);
-		EntityRegistry.addSpawn(EntityHaunter.class, 10, 1, 1, EnumCreatureType.MONSTER, biomes);
-		EntityRegistry.addSpawn(EntityTreater.class, 50, 4, 4, EnumCreatureType.MONSTER, biomes);
-
-//		copySpawns(EntityCreeperween.class, EnumCreatureType.MONSTER, EntityCreeper.class, EnumCreatureType.MONSTER);
-//		copySpawns(EntityJumpkin.class, EnumCreatureType.MONSTER, EntityCreeper.class, EnumCreatureType.MONSTER);
-//		copySpawns(EntityZombieHands.class, EnumCreatureType.MONSTER, EntityZombie.class, EnumCreatureType.MONSTER);
-//		copySpawns(EntityHallowitch.class, EnumCreatureType.MONSTER, EntityWitch.class, EnumCreatureType.MONSTER);
-//		copySpawns(EntityHaunter.class, EnumCreatureType.MONSTER, EntityCreeper.class, EnumCreatureType.MONSTER);
+		EntityRegistry.registerModEntity(entityClass, entityName, id++, HalloweenMod.instance, 64, 3, true, eggPrimary, eggSecondary);
 	}
 
+	private static void registerThrowable(Class<? extends Entity> entityClass, String entityName)
+	{
+		EntityRegistry.registerModEntity(entityClass, entityName, id++, HalloweenMod.instance, 64, 10, true);
+	}
 
-
-
+	private static void registerProjectile(Class<? extends Entity> entityClass, String entityName)
+	{
+		EntityRegistry.registerModEntity(entityClass, entityName, id++, HalloweenMod.instance, 64, 20, true);
+	}
 
 	private static void registerEntity(Class<? extends Entity> entityClass, String entityName, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
 	{
 		EntityRegistry.registerModEntity(entityClass, entityName, id++, HalloweenMod.instance, trackingRange, updateFrequency, sendsVelocityUpdates);
 	}
 
-	private static void registerEntity(Class<? extends Entity> entityClass, String entityName, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates, int eggPrimary, int eggSecondary)
+
+	/**
+	 * Add spawning rules for the living mobs we want to be able to spawn naturally.
+	 */
+	public static void addEntitySpawns()
 	{
-		EntityRegistry.registerModEntity(entityClass, entityName, id++, HalloweenMod.instance, trackingRange, updateFrequency, sendsVelocityUpdates, eggPrimary, eggSecondary);
+		// get the list of biomes that creepers can spawn in, we'll use the same biomes for all of our mobs
+		Biome[] biomes = getBiomeList(EntityCreeper.class, EnumCreatureType.MONSTER);
+
+		// add the spawn rules to the entity registry
+		EntityRegistry.addSpawn(EntityJumpkin.class, 100, 4, 4, EnumCreatureType.MONSTER, biomes);
+		EntityRegistry.addSpawn(EntityZombieHands.class, 100, 4, 4, EnumCreatureType.MONSTER, biomes);
+		EntityRegistry.addSpawn(EntityHallowitch.class, 75, 4, 4, EnumCreatureType.MONSTER, biomes);
+		EntityRegistry.addSpawn(EntityCreeperween.class, 75, 4, 4, EnumCreatureType.MONSTER, biomes);
+		EntityRegistry.addSpawn(EntityHaunter.class, 5, 1, 1, EnumCreatureType.MONSTER, biomes);
+		EntityRegistry.addSpawn(EntityTreater.class, 50, 4, 4, EnumCreatureType.MONSTER, biomes);
 	}
 
-
+	/**
+	 * Helper method to return an array of biomes in which an already existing instance of EntityLiving can spawn.
+	 */
 	private static final Biome[] getBiomeList(final Class<? extends EntityLiving> classToCopy, final EnumCreatureType creatureTypeToCopy)
 	{
 		final List<Biome> biomes = new ArrayList<Biome>();
@@ -148,36 +157,11 @@ public class ModEntities
 	}
 
 
-//	private static void copySpawns(final Class<? extends EntityLiving> classToAdd, final EnumCreatureType creatureTypeToAdd, final Class<? extends EntityLiving> classToCopy, final EnumCreatureType creatureTypeToCopy)
-//	{
-//		for (final Biome biome : ForgeRegistries.BIOMES)
-//		{
-//			biome.getSpawnableList(creatureTypeToCopy).stream().filter(new Predicate<SpawnListEntry>()
-//			{
-//				@Override
-//				public boolean test(SpawnListEntry entry)
-//				{
-//					return entry.entityClass == classToCopy;
-//				}
-//			})
-//			.findFirst()
-//			.ifPresent(new Consumer<SpawnListEntry>()
-//			{
-//				@Override
-//				public void accept(SpawnListEntry spawnListEntry)
-//				{
-//					biome.getSpawnableList(creatureTypeToAdd).add(new Biome.SpawnListEntry(classToAdd, spawnListEntry.itemWeight, spawnListEntry.minGroupCount, spawnListEntry.maxGroupCount));
-//				}
-//			});
-//		}
-//	}
-
-
-
-
-
+	/**
+	 * Register the rendering handlers for the mod's entities.
+	 */
 	@SideOnly(Side.CLIENT)
-	public static void registerRenderingHandlers()
+	public static void registerEntityRenderingHandlers()
 	{
 		// hostile mobs
 		registerEntityRenderingHandler(EntityCreeperween.class, RenderCreeperween.class);
@@ -185,11 +169,10 @@ public class ModEntities
 		registerEntityRenderingHandler(EntityZombieHands.class, RenderZombieHands.class);
 		registerEntityRenderingHandler(EntityHallowitch.class, RenderHallowitch.class);
 		registerEntityRenderingHandler(EntityHaunter.class, RenderHaunter.class);
-
 		// passive mobs
 		registerEntityRenderingHandler(EntityTreater.class, RenderTreater.class);
 
-		// projectiles
+		// throwables
 		registerEntityRenderingHandler(EntityCurseOrb.class, RenderCurseOrb.class);
 		// fake projectiles
 		registerEntityRenderingHandler(EntityFakeArrow.class, RenderFakeArrow.class);
@@ -197,7 +180,6 @@ public class ModEntities
 		// effects
 		registerEntityRenderingHandler(EntityCurse.class, RenderCurse.class);
 	}
-
 
 	@SideOnly(Side.CLIENT)
 	private static <T extends Entity> void registerEntityRenderingHandler(Class<T> entityClass, Class<? extends Render<? super T>> renderClass)

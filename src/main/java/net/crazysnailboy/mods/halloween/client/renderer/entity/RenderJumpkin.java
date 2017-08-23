@@ -24,6 +24,7 @@ public class RenderJumpkin extends RenderLiving<EntityJumpkin>
 		super(renderManager, new ModelJumpkin(), 0.25F);
 	}
 
+
 	@Override
 	public void doRender(EntityJumpkin entity, double x, double y, double z, float entityYaw, float partialTicks)
 	{

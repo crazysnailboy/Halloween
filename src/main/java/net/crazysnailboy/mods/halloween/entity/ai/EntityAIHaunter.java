@@ -173,7 +173,7 @@ public class EntityAIHaunter
 		 */
 		private EntityMob getDrone()
 		{
-			EntityMob entity = WorldUtils.getRandomEntity(this.taskOwner.world, EntityMob.class, this.attackTarget.getPosition(), 32.0D, new Predicate<EntityMob>()
+			EntityMob entity = WorldUtils.getRandomEntity(this.taskOwner.world, EntityMob.class, this.attackTarget.getPosition(), 16.0D, new Predicate<EntityMob>()
 			{
 				@Override
 				public boolean apply(@Nullable EntityMob entity)

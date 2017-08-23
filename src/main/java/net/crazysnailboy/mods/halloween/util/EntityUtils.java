@@ -1,8 +1,6 @@
 package net.crazysnailboy.mods.halloween.util;
 
-import java.lang.reflect.Field;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
@@ -126,12 +124,5 @@ public class EntityUtils
 	{
 		return 0.0F;
 	}
-
-	public static int getFire(Entity entity)
-	{
-		return ReflectionUtils.getFieldValue(entityFire, entity);
-	}
-
-	private static final Field entityFire = ReflectionUtils.getDeclaredField(Entity.class, "fire", "field_70151_c");
 
 }

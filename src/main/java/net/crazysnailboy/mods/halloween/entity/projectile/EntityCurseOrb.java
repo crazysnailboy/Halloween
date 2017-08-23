@@ -69,8 +69,7 @@ public class EntityCurseOrb extends EntityThrowable
 				{
 					// make the witch disappear in a puff of particles
 					EntityHallowitch witch = (EntityHallowitch)this.getThrower();
-					witch.onKillCommand();
-					witch.spawnExplosionParticle();
+					witch.gotchaBitch(victim);
 				}
 			}
 

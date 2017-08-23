@@ -38,7 +38,7 @@ public class ClientProxy extends CommonProxy
 
 	private void registerEntityModels()
 	{
-		ModEntities.registerRenderingHandlers();
+		ModEntities.registerEntityRenderingHandlers();
 	}
 
 }

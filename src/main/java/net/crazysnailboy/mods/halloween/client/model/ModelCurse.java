@@ -4,8 +4,11 @@ import net.crazysnailboy.mods.halloween.entity.effect.EntityCurse.EnumCurseType;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 
+@SideOnly(Side.CLIENT)
 public class ModelCurse extends ModelBase
 {
 
@@ -53,7 +56,7 @@ public class ModelCurse extends ModelBase
 	@Override
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale, Entity entity)
 	{
-		this.head.rotateAngleY = 0F;
+		this.head.rotateAngleY = 0.0F;
 		this.head.rotateAngleX = 0.05F;
 	}
 

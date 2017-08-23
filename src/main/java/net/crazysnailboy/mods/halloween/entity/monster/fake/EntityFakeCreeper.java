@@ -1,7 +1,9 @@
 package net.crazysnailboy.mods.halloween.entity.monster.fake;
 
+import java.lang.reflect.Field;
 import net.crazysnailboy.mods.halloween.entity.monster.EntityHaunter;
 import net.crazysnailboy.mods.halloween.init.ModSoundEvents;
+import net.crazysnailboy.mods.halloween.util.ReflectionUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,15 +11,16 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 
 /**
- * A "fake" zombie. Created by {@link EntityHaunter} during it's attack.
+ * A "fake" {@link EntityCreeper}. Created by {@link EntityHaunter} during it's attack.
  *
  */
 public class EntityFakeCreeper extends EntityCreeper implements IFakeMonster
 {
+
+	private static final Field explosionRadius = ReflectionUtils.getDeclaredField(EntityCreeper.class, "explosionRadius", "field_82226_g");
 
 	private int suspension;
 
@@ -88,7 +91,7 @@ public class EntityFakeCreeper extends EntityCreeper implements IFakeMonster
 	 */
 	private void setExplosionRadius(byte value)
 	{
-		ObfuscationReflectionHelper.setPrivateValue(EntityCreeper.class, this, value, "explosionRadius", "field_82226_g");
+		ReflectionUtils.setFieldValue(explosionRadius, this, value);
 	}
 
 }

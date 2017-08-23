@@ -18,7 +18,7 @@ import net.minecraft.world.World;
 
 
 /**
- * A "fake" zombie. Created by {@link EntityHaunter} during it's attack.
+ * A "fake" {@link EntitySkeleton}. Created by {@link EntityHaunter} during it's attack.
  *
  */
 public class EntityFakeSkeleton extends EntitySkeleton implements IFakeMonster

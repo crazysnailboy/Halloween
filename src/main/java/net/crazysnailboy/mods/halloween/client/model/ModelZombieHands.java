@@ -5,8 +5,11 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 
+@SideOnly(Side.CLIENT)
 public class ModelZombieHands extends ModelBiped
 {
 
@@ -15,28 +18,28 @@ public class ModelZombieHands extends ModelBiped
         this(0.0F, 24.0F, 64, 64);
     }
 
-    public ModelZombieHands(float modelSize, float p_i1149_2_, int textureWidthIn, int textureHeightIn)
+    public ModelZombieHands(float modelSize, float p_i1149_2_, int textureWidth, int textureHeight)
 	{
-        this.textureWidth = textureWidthIn;
-        this.textureHeight = textureHeightIn;
+        this.textureWidth = textureWidth;
+        this.textureHeight = textureHeight;
 
 		this.isRiding = false;
 		this.isChild = false;
 		this.isSneak = false;
 		this.bipedRightArm = new ModelRenderer(this, 40, 16);
-		this.bipedRightArm.addBox(-2F, 0F, 0F, 4, 12, 4, modelSize);
-		this.bipedRightArm.setRotationPoint(-4F, 0F + p_i1149_2_, 2.0F);
+		this.bipedRightArm.addBox(-2.0F, 0.0F, 0.0F, 4, 12, 4, modelSize);
+		this.bipedRightArm.setRotationPoint(-4.0F, 0.0F + p_i1149_2_, 2.0F);
 		this.bipedLeftArm = new ModelRenderer(this, 40, 16);
 		this.bipedLeftArm.mirror = true;
-		this.bipedLeftArm.addBox(-2F, 0F, 0F, 4, 12, 4, modelSize);
-		this.bipedLeftArm.setRotationPoint(4F, 0F + p_i1149_2_, 2.0F);
+		this.bipedLeftArm.addBox(-2.0F, 0.0F, 0.0F, 4, 12, 4, modelSize);
+		this.bipedLeftArm.setRotationPoint(4.0F, 0.0F + p_i1149_2_, 2.0F);
 	}
 
 	@Override
 	public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
 	{
 		this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entity);
-		GL11.glTranslatef(0F, 0.375F - (limbSwingAmount * 0.75F), 0F);
+		GL11.glTranslatef(0.0F, 0.375F - (limbSwingAmount * 0.75F), 0.0F);
 		this.bipedRightArm.render(scale);
 		this.bipedLeftArm.render(scale);
 	}

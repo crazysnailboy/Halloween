@@ -1,5 +1,6 @@
 package net.crazysnailboy.mods.halloween.entity.passive;
 
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
 import javax.annotation.Nullable;
@@ -9,6 +10,7 @@ import net.crazysnailboy.mods.halloween.init.ModItems;
 import net.crazysnailboy.mods.halloween.item.ItemCandy.EnumCandyFlavour;
 import net.crazysnailboy.mods.halloween.util.BlockUtils;
 import net.crazysnailboy.mods.halloween.util.EntityUtils;
+import net.crazysnailboy.mods.halloween.util.ReflectionUtils;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAILookIdle;
@@ -52,6 +54,8 @@ import net.minecraft.world.storage.loot.LootTableList;
  */
 public class EntityTreater extends EntityAnimal
 {
+
+	private static final Field entityInLove = ReflectionUtils.getDeclaredField(EntityAnimal.class, "inLove", "field_70881_d");
 
 	private static final DataParameter<Integer> TREATER_TYPE = EntityDataManager.<Integer>createKey(EntityTreater.class, DataSerializers.VARINT);
 
@@ -119,7 +123,7 @@ public class EntityTreater extends EntityAnimal
 	@Override
 	public boolean processInteract(EntityPlayer player, EnumHand hand, @Nullable ItemStack stack)
 	{
-		if (stack != null)
+		if (stack != null && !this.isInLove())
 		{
 			boolean consumeItem = false;
 
@@ -149,7 +153,8 @@ public class EntityTreater extends EntityAnimal
 			if (consumeItem)
 			{
 				this.consumeItemFromStack(player, stack);
-				this.world.setEntityState(this, (byte)18); // spawns heart particles
+				this.setInLove(player);
+//				this.world.setEntityState(this, (byte)18); // spawns heart particles
 			}
 		}
 
@@ -227,6 +232,7 @@ public class EntityTreater extends EntityAnimal
 						this.chatItUp(player, EnumTreaterMessage.THANKING);
 						this.dropThankItem(player, false);
 					}
+					this.setInLove(player);
 				}
 			}
 			// kill the entity to make the item disappear as if the treater picked it up
@@ -280,6 +286,12 @@ public class EntityTreater extends EntityAnimal
 		this.setCanPickUpLoot(true); // EntityVillager sets this to true here as well
 	}
 
+	@Override
+	public void setInLove(EntityPlayer player)
+	{
+		super.setInLove(player);
+		ReflectionUtils.setFieldValue(entityInLove, this, 200);
+	}
 
 	public EnumTreaterType getTreaterType()
 	{
@@ -412,6 +424,7 @@ public class EntityTreater extends EntityAnimal
 		}
 	}
 
+
 	public enum EnumTreaterType
 	{
 		CREEPER("creeper", EnumCandyFlavour.APPLE, LootTableList.ENTITIES_CREEPER),
@@ -455,6 +468,5 @@ public class EntityTreater extends EntityAnimal
 		}
 
 	}
-
 
 }

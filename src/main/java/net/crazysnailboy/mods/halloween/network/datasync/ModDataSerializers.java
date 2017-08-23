@@ -13,12 +13,15 @@ public class ModDataSerializers
 
 	public static class EnumDataSerializer<T extends Enum> implements DataSerializer<T>
 	{
+
 		private final Class<T> enumClass;
+
 
 		public EnumDataSerializer(Class<T> enumClass)
 		{
 			this.enumClass = enumClass;
 		}
+
 
 		@Override
 		public void write(PacketBuffer buf, T value)
