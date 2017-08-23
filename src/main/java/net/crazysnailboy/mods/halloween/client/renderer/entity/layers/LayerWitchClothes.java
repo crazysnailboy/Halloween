@@ -8,13 +8,18 @@ import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+
+@SideOnly(Side.CLIENT)
 public class LayerWitchClothes<T extends ModelBase> implements LayerRenderer<EntityLiving>
 {
 	private static final ResourceLocation TEXTURE_COSTUME = new ResourceLocation(HalloweenMod.MODID, "textures/entity/hallowitch/witch_clothes.png");
 
 	private final ModelWitchClothes model = new ModelWitchClothes();
 	private final RenderLiving renderEntity;
+
 
     public LayerWitchClothes(RenderLiving renderEntity)
     {

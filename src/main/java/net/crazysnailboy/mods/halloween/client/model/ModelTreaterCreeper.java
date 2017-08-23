@@ -4,8 +4,11 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 
+@SideOnly(Side.CLIENT)
 public class ModelTreaterCreeper extends ModelBiped
 {
 

@@ -6,9 +6,10 @@ import com.google.common.base.Predicate;
 import net.crazysnailboy.mods.halloween.entity.monster.EntityHaunter;
 import net.crazysnailboy.mods.halloween.entity.monster.EntityHaunter.EnumTransparencyState;
 import net.crazysnailboy.mods.halloween.entity.monster.fake.EntityFakeCreeper;
+import net.crazysnailboy.mods.halloween.entity.monster.fake.EntityFakeHusk;
 import net.crazysnailboy.mods.halloween.entity.monster.fake.EntityFakeSkeleton;
 import net.crazysnailboy.mods.halloween.entity.monster.fake.EntityFakeSpider;
-import net.crazysnailboy.mods.halloween.entity.monster.fake.EntityFakeZombie;
+import net.crazysnailboy.mods.halloween.entity.monster.fake.EntityFakeStray;
 import net.crazysnailboy.mods.halloween.init.ModSoundEvents;
 import net.crazysnailboy.mods.halloween.util.WorldUtils;
 import net.minecraft.entity.EntityLiving.SpawnPlacementType;
@@ -17,14 +18,19 @@ import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityHusk;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySpider;
+import net.minecraft.entity.monster.EntityStray;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldEntitySpawner;
+import net.minecraft.world.biome.BiomeDesert;
+import net.minecraft.world.biome.BiomeSnow;
 
 
 /**
@@ -173,7 +179,7 @@ public class EntityAIHaunter
 		 */
 		private EntityMob getDrone()
 		{
-			EntityMob entity = WorldUtils.getRandomEntity(this.taskOwner.world, EntityMob.class, this.attackTarget.getPosition(), 32.0D, new Predicate<EntityMob>()
+			EntityMob entity = WorldUtils.getRandomEntity(this.taskOwner.world, EntityMob.class, this.attackTarget.getPosition(), 16.0D, new Predicate<EntityMob>()
 			{
 				@Override
 				public boolean apply(@Nullable EntityMob entity)
@@ -191,6 +197,8 @@ public class EntityAIHaunter
 		{
 			EntityMob entity = null;
 			Random rand = this.taskOwner.getRNG();
+			World world = this.taskOwner.world;
+			BlockPos pos = this.taskOwner.getPosition();
 
 			// create a drone entity of a random type, with a chance of it being a fake
 			int entityType = rand.nextInt(4);
@@ -199,16 +207,28 @@ public class EntityAIHaunter
 			switch (entityType)
 			{
 				case 0:
-					entity = (!fakeEntity ? new EntityZombie(this.taskOwner.world) : new EntityFakeZombie(this.taskOwner.world));
+					boolean spawnHusk = (world.getBiome(pos) instanceof BiomeDesert && world.canSeeSky(pos) && rand.nextInt(5) != 0);
+					entity = (!fakeEntity
+						?
+						(spawnHusk ? new EntityHusk(world) : new EntityZombie(world))
+						:
+						(spawnHusk ? new EntityFakeHusk(world) : new EntityHusk(world))
+					);
 					break;
 				case 1:
-					entity = (!fakeEntity ? new EntitySkeleton(this.taskOwner.world) : new EntityFakeSkeleton(this.taskOwner.world));
+					boolean spawnStray = (world.getBiome(pos) instanceof BiomeSnow && world.canSeeSky(pos) && rand.nextInt(5) != 0);
+					entity = (!fakeEntity
+						?
+						(spawnStray ? new EntityStray(world) : new EntitySkeleton(world))
+						:
+						(spawnStray ? new EntityFakeStray(world) : new EntityFakeSkeleton(world))
+					);
 					break;
 				case 2:
-					entity = (!fakeEntity ? new EntitySpider(this.taskOwner.world) : new EntityFakeSpider(this.taskOwner.world));
+					entity = (!fakeEntity ? new EntitySpider(world) : new EntityFakeSpider(world));
 					break;
 				case 3:
-					entity = (!fakeEntity ? new EntityCreeper(this.taskOwner.world) : new EntityFakeCreeper(this.taskOwner.world));
+					entity = (!fakeEntity ? new EntityCreeper(world) : new EntityFakeCreeper(world));
 					break;
 				default:
 					return null;
@@ -226,17 +246,16 @@ public class EntityAIHaunter
 				double tryX = x + (16.0D - (rand.nextFloat() * 32.0D));
 				double tryY = y + ((rand.nextFloat() - rand.nextFloat()) * 4.0D);
 				double tryZ = z + (16.0D - (rand.nextFloat() * 32.0D));
-				BlockPos pos = new BlockPos(tryX, tryY, tryZ);
 
 				// if the closen position is a valid spawn location...
-				if (WorldEntitySpawner.canCreatureTypeSpawnAtLocation(SpawnPlacementType.ON_GROUND, this.taskOwner.world, pos))
+				if (WorldEntitySpawner.canCreatureTypeSpawnAtLocation(SpawnPlacementType.ON_GROUND, world, new BlockPos(tryX, tryY, tryZ)))
 				{
 					// set the drone's position and direction, and spawn it in the world
 					entity.setPositionAndRotation(tryX, tryY, tryZ, MathHelper.wrapDegrees(rand.nextFloat() * 360.0F), 0.0F);
 					entity.rotationYawHead = entity.rotationYaw;
 					entity.renderYawOffset = entity.rotationYaw;
 					entity.onInitialSpawn(this.taskOwner.world.getDifficultyForLocation(new BlockPos(entity)), (IEntityLivingData)null);
-					this.taskOwner.world.spawnEntity(entity);
+					world.spawnEntity(entity);
 
 					// create a particle effect and play the appear sound
 					entity.spawnExplosionParticle();

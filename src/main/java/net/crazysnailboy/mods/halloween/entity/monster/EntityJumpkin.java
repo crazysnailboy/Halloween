@@ -15,6 +15,7 @@ import net.minecraft.entity.ai.EntityAIFindEntityNearest;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -22,6 +23,7 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 
@@ -31,7 +33,6 @@ public class EntityJumpkin extends EntitySlime
 
 	private static final DataParameter<Boolean> LIT = EntityDataManager.<Boolean>createKey(EntityJumpkin.class, DataSerializers.BOOLEAN);
 
-	private boolean spawned;
 	private boolean awakened;
 
 
@@ -80,22 +81,14 @@ public class EntityJumpkin extends EntitySlime
 	@Override
 	public void onLivingUpdate()
 	{
+		// ensure that jumpkins spawn aligned as blocks (TODO - doesn't work)
+		if (this.firstUpdate)
+		{
+			this.alignToBlocks();
+		}
+
 		if (!this.world.isRemote)
 		{
-			// ensure that jumpkins spawn aligned as blocks (TODO - doesn't work)
-			if (!this.spawned)
-			{
-				this.rotationPitch = 0.0F;
-				this.rotationYaw = this.prevRotationYaw = this.rotationYawHead = this.renderYawOffset = (float)this.rand.nextInt(4) * 90.0F;
-				this.setRotation(this.rotationYaw, this.rotationPitch);
-				this.posX = Math.floor(this.posX) + 0.5D;
-				this.posZ = Math.floor(this.posZ) + 0.5D;
-				this.setPosition(this.posX, this.posY, this.posZ);
-				this.motionX = this.motionY = this.motionZ = 0.0D;
-				this.setMoveForward(0.0F);
-
-				this.spawned = true;
-			}
 			// if it's daytime, jumpkins have a chance to turn into pumpkins
 			if (this.world.isDaytime())
 			{
@@ -119,7 +112,6 @@ public class EntityJumpkin extends EntitySlime
 	public void writeEntityToNBT(NBTTagCompound compound)
 	{
 		super.writeEntityToNBT(compound);
-		compound.setBoolean("Spawned", this.spawned);
 		compound.setBoolean("Awakened", this.awakened);
 		compound.setBoolean("Lit", this.getLit());
 	}
@@ -129,8 +121,7 @@ public class EntityJumpkin extends EntitySlime
 	{
 		super.readEntityFromNBT(compound);
 		this.setLit(compound.getBoolean("Lit"));
-		this.spawned = compound.getBoolean("Spawned");
-		this.awakened = compound.getBoolean("Awakened");
+		this.setAwakened(compound.getBoolean("Awakened"));
 		this.setSlimeSize(2, true);
 	}
 
@@ -140,18 +131,18 @@ public class EntityJumpkin extends EntitySlime
 		return EnumParticleTypes.FLAME;
 	}
 
-//	@Override
-//	protected SoundEvent getHurtSound()
-//	{
-//		return SoundEvents.BLOCK_WOOD_STEP;
-//	}
-//
-//	@Override
-//	protected SoundEvent getDeathSound()
-//	{
-//		return SoundEvents.BLOCK_WOOD_STEP;
-//	}
-//
+	@Override
+	protected SoundEvent getHurtSound()
+	{
+		return SoundEvents.BLOCK_WOOD_STEP;
+	}
+
+	@Override
+	protected SoundEvent getDeathSound()
+	{
+		return SoundEvents.BLOCK_WOOD_STEP;
+	}
+
 //	@Override
 //	protected SoundEvent getSquishSound()
 //	{
@@ -258,6 +249,18 @@ public class EntityJumpkin extends EntitySlime
             	iterator.remove();
             }
         }
+	}
+
+	private void alignToBlocks()
+	{
+		this.rotationPitch = 0.0F;
+		this.rotationYaw = this.prevRotationYaw = this.rotationYawHead = this.renderYawOffset = (Math.round(this.rotationYaw / 90.0F) * 90.0F);
+		this.setRotation(this.rotationYaw, this.rotationPitch);
+		this.posX = Math.floor(this.posX) + 0.5D;
+		this.posZ = Math.floor(this.posZ) + 0.5D;
+		this.setPosition(this.posX, this.posY, this.posZ);
+		this.motionX = this.motionY = this.motionZ = 0.0D;
+		this.setMoveForward(0.0F);
 	}
 
 }
