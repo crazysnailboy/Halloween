@@ -1,10 +1,10 @@
 [{
 	"modid": "halloween",
-	"name": "Halloween Mod",
+	"name": "No-Holds-Barred Halloween Mod",
 	"description": "\u00A77A revival of the \u00A76No-Holds-Barred Halloween Mod\u00A77, originally written by \u00A76Kodaichi\u00A77 for Minecraft Beta 1.8.1\u00A7r",
 	"version": "${version}",
 	"mcversion": "${mcversion}",
-	"url": "https://github.com/crazysnailboy/Halloween/releases",
+	"url": "https://minecraft.curseforge.com/projects/no-holds-barred-halloween-mod/",
 	"updateUrl": "",
 	"authorList": ["\u00A76Kodaichi\u00A7r","\u00A76csb987\u00A7r"],
 	"credits": "",
