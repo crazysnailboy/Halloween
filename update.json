@@ -1,18 +1,21 @@
 {
-	"homepage": "https://github.com/crazysnailboy/Halloween/releases",
+	"homepage": "https://minecraft.curseforge.com/projects/no-holds-barred-halloween-mod/files",
 	"promos": {
-		"1.12.1-latest": "0.1.10",
-		"1.12.1-recommended": "0.1.10",
-		"1.12-latest": "0.1.10",
-		"1.12-recommended": "0.1.10",
-		"1.11.2-latest": "0.1.10",
-		"1.11.2-recommended": "0.1.10",
-		"1.11-latest": "0.1.10",
-		"1.11-recommended": "0.1.10",
-		"1.10.2-latest": "0.1.10",
-		"1.10.2-recommended": "0.1.10"
+		"1.12.2-latest": "0.9",
+		"1.12.2-recommended": "0.9",
+		"1.12.1-latest": "0.9",
+		"1.12.1-recommended": "0.9",
+		"1.12-latest": "0.9",
+		"1.12-recommended": "0.9",
+		"1.11.2-latest": "0.9",
+		"1.11.2-recommended": "0.9",
+		"1.11-latest": "0.9",
+		"1.11-recommended": "0.9",
+		"1.10.2-latest": "0.9",
+		"1.10.2-recommended": "0.9"
 	},
 	"1.12.2": {
+		"0.9": "Initial beta release",
 		"0.1.10": "fixed jumpkins not spawning",
 		"0.1.9": "mostly tidying up, also fake strays and husks",
 		"0.1.8": "husk hands and other tweaks",
@@ -26,6 +29,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.12.1": {
+		"0.9": "Initial beta release",
 		"0.1.10": "fixed jumpkins not spawning",
 		"0.1.9": "mostly tidying up, also fake strays and husks",
 		"0.1.8": "husk hands and other tweaks",
@@ -39,6 +43,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.12": {
+		"0.9": "Initial beta release",
 		"0.1.10": "fixed jumpkins not spawning",
 		"0.1.9": "mostly tidying up, also fake strays and husks",
 		"0.1.8": "husk hands and other tweaks",
@@ -52,6 +57,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.11.2": {
+		"0.9": "Initial beta release",
 		"0.1.10": "fixed jumpkins not spawning",
 		"0.1.9": "mostly tidying up, also fake strays and husks",
 		"0.1.8": "husk hands and other tweaks",
@@ -65,6 +71,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.11": {
+		"0.9": "Initial beta release",
 		"0.1.10": "fixed jumpkins not spawning",
 		"0.1.9": "mostly tidying up, also fake strays and husks",
 		"0.1.8": "husk hands and other tweaks",
@@ -78,6 +85,7 @@
 		"0.1": "Initial alpha release"
 	},
 	"1.10.2": {
+		"0.9": "Initial beta release",
 		"0.1.10": "fixed jumpkins not spawning",
 		"0.1.9": "mostly tidying up, also fake strays and husks",
 		"0.1.8": "husk hands and other tweaks",
