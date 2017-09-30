@@ -145,17 +145,17 @@ public class EntityJumpkin extends EntitySlime
 		return SoundEvents.BLOCK_WOOD_STEP;
 	}
 
-//	@Override
-//	protected SoundEvent getSquishSound()
-//	{
-//		return SoundEvents.BLOCK_WOOD_FALL;
-//	}
-//
-//	@Override
-//	protected SoundEvent getJumpSound()
-//	{
-//		return SoundEvents.BLOCK_WOOD_STEP;
-//	}
+	@Override
+	protected SoundEvent getSquishSound()
+	{
+		return SoundEvents.BLOCK_WOOD_FALL;
+	}
+
+	@Override
+	protected SoundEvent getJumpSound()
+	{
+		return SoundEvents.BLOCK_WOOD_STEP;
+	}
 
 	@Override
 	protected void setSlimeSize(int size)
@@ -182,16 +182,7 @@ public class EntityJumpkin extends EntitySlime
 	@Override
 	public boolean getCanSpawnHere()
 	{
-		return this.world.getBlockState(this.getPosition().down()) == Material.GRASS && EntityUtils.getCanMobSpawnHere(this);
-
-//		BlockPos pos = new BlockPos(this.posX, this.getEntityBoundingBox().minY, this.posZ);
-//
-//		if (this.world.getLight(pos) > 0 && this.world.getBlockState(pos.down()) == Material.GRASS && EntityUtils.getCanLivingSpawnHere(this))
-//		{
-//			List<Entity> entities = this.world.getEntitiesWithinAABBExcludingEntity(this, this.getEntityBoundingBox().expand(2.0D, 2.0D, 2.0D));
-//			return entities.isEmpty();
-//		}
-//		return false;
+		return this.world.getBlockState(this.getPosition().down()).getMaterial() == Material.GRASS && EntityUtils.getCanMobSpawnHere(this);
 	}
 
 	/**
