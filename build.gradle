@@ -10,7 +10,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 
-version = "0.1.9"
+version = "0.1.10"
 group = "net.crazysnailboy.mods.halloween"
 archivesBaseName = "Halloween-1.11"
 
@@ -25,8 +25,8 @@ minecraft {
 	mappings = "stable_32"
 	makeObfSourceJar = false
 
-    replace "\${version}", project.version
-    replaceIn "HalloweenMod.java"
+	replace "\${version}", project.version
+	replaceIn "HalloweenMod.java"
 }
 
 dependencies {
@@ -43,9 +43,3 @@ processResources {
 		exclude 'mcmod.info'
 	}
 }
-
-//jar {
-//	manifest {
-//	    attributes 'FMLAT': 'halloween_at.cfg'
-//	}
-//}
