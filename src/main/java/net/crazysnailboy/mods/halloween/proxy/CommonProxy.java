@@ -1,9 +1,11 @@
 package net.crazysnailboy.mods.halloween.proxy;
 
 import net.crazysnailboy.mods.halloween.HalloweenMod;
+import net.crazysnailboy.mods.halloween.common.network.ConfigSyncMessage;
 import net.crazysnailboy.mods.halloween.common.network.JumpkinRotationMessage;
 import net.crazysnailboy.mods.halloween.init.ModEntities;
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
+import net.crazysnailboy.mods.halloween.network.datasync.ModDataSerializers;
 import net.minecraftforge.fml.relauncher.Side;
 
 
@@ -28,6 +30,7 @@ public class CommonProxy
 
 	private void registerEntities()
 	{
+		ModDataSerializers.registerDataSerializers();
 		ModEntities.registerEntities();
 		ModEntities.addEntitySpawns();
 	}
@@ -40,6 +43,7 @@ public class CommonProxy
 	private void registerNetworkMessages()
 	{
 		HalloweenMod.NETWORK.registerMessage(JumpkinRotationMessage.class, JumpkinRotationMessage.class, 0, Side.CLIENT);
+		HalloweenMod.NETWORK.registerMessage(ConfigSyncMessage.class, ConfigSyncMessage.class, 1, Side.CLIENT);
 	}
 
 }

@@ -54,7 +54,7 @@ public class ModDataSerializers
 	public static final DataSerializer<ZombieType> ZOMBIE_TYPE = new EnumDataSerializer<ZombieType>(ZombieType.class);
 
 
-	static
+	public static void registerDataSerializers()
 	{
 		DataSerializers.registerSerializer(HAUNTER_TRANSPARENCY);
 		DataSerializers.registerSerializer(ZOMBIE_TYPE);

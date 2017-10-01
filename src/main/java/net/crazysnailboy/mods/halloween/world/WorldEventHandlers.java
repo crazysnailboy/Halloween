@@ -27,7 +27,7 @@ public class WorldEventHandlers
 	@SubscribeEvent
 	public static void onWorldTick(WorldTickEvent event)
 	{
-		if (ModConfiguration.ambientSoundsEnabled && event.side == Side.SERVER && event.phase == Phase.END && !(event.world instanceof WorldServerMulti))
+		if (ModConfiguration.isHalloween && ModConfiguration.ambientSoundsEnabled && event.side == Side.SERVER && event.phase == Phase.END && !(event.world instanceof WorldServerMulti))
 		{
 			World world = event.world;
 			if (!world.isDaytime())

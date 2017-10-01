@@ -1,5 +1,6 @@
 package net.crazysnailboy.mods.halloween.entity.monster;
 
+import net.crazysnailboy.mods.halloween.common.config.ModConfiguration;
 import net.crazysnailboy.mods.halloween.entity.ai.EntityAIHaunter;
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
 import net.crazysnailboy.mods.halloween.init.ModSoundEvents;
@@ -290,6 +291,12 @@ public class EntityHaunter extends EntityMob
 	public float getBrightness()
 	{
 		return 1.0F;
+	}
+
+	@Override
+	public boolean getCanSpawnHere()
+	{
+		return ModConfiguration.isHalloween && ModConfiguration.enableHaunters && super.getCanSpawnHere();
 	}
 
 	@Override
