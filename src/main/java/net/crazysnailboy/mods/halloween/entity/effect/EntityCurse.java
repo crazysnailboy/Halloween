@@ -77,7 +77,6 @@ public abstract class EntityCurse extends Entity
 			if (this.victim instanceof EntityPlayer)
 			{
 				((EntityPlayer)this.victim).sendMessage(new TextComponentString(String.format(I18n.translateToLocal("chat.curse.struck"), this.getCurseType().getDisplayName())));
-//				((EntityPlayer)this.victim).sendMessage(new TextComponentTranslation("chat.curse.struck", this.getCurseType().getDisplayName()));
 			}
 			this.setPosition(this.victim.posX, this.victim.posY + this.victim.getEyeHeight(), this.victim.posZ);
 		}

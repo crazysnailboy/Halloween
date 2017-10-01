@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
+import net.crazysnailboy.mods.halloween.common.config.ModConfiguration;
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
 import net.crazysnailboy.mods.halloween.network.datasync.ModDataSerializers;
 import net.crazysnailboy.mods.halloween.util.BlockUtils;
@@ -247,7 +248,7 @@ public class EntityZombieHands extends EntityZombie
 	@Override
 	public boolean getCanSpawnHere()
 	{
-		if (super.getCanSpawnHere())
+		if (ModConfiguration.isHalloween && ModConfiguration.enableZombieHands && super.getCanSpawnHere())
 		{
 			BlockPos pos = new BlockPos(this.posX, this.posY, this.posZ);
 			if (this.world.getLight(pos) > 0 && BlockUtils.isSoftGround(this.world, pos.down()))

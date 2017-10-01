@@ -1,5 +1,6 @@
 package net.crazysnailboy.mods.halloween.entity.projectile;
 
+import net.crazysnailboy.mods.halloween.common.config.ModConfiguration;
 import net.crazysnailboy.mods.halloween.entity.effect.EntityCreeperCurse;
 import net.crazysnailboy.mods.halloween.entity.effect.EntityCurse;
 import net.crazysnailboy.mods.halloween.entity.effect.EntityCurse.EnumCurseType;
@@ -47,7 +48,7 @@ public class EntityCurseOrb extends EntityThrowable
 		if (!this.world.isRemote)
 		{
 			// if the curse orb hit a living entity which is not a haunter...
-			if (result.entityHit != null && result.entityHit instanceof EntityLivingBase && !(result.entityHit instanceof EntityHaunter))
+			if (ModConfiguration.enableCurses && result.entityHit != null && result.entityHit instanceof EntityLivingBase && !(result.entityHit instanceof EntityHaunter))
 			{
 				// create and spawn a random curse, with the entity which was hit as the curse's victim
 				EntityLivingBase victim = (EntityLivingBase)result.entityHit;

@@ -1,5 +1,6 @@
 package net.crazysnailboy.mods.halloween.entity.monster;
 
+import net.crazysnailboy.mods.halloween.common.config.ModConfiguration;
 import net.crazysnailboy.mods.halloween.entity.ai.EntityAIHallowitch;
 import net.crazysnailboy.mods.halloween.entity.projectile.EntityCurseOrb;
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
@@ -110,6 +111,11 @@ public class EntityHallowitch extends EntityMob implements IRangedAttackMob
 		return ModLootTables.ENTITIES_HALLOWITCH;
 	}
 
+	@Override
+	public boolean getCanSpawnHere()
+	{
+		return ModConfiguration.isHalloween && ModConfiguration.enableHallowitches && super.getCanSpawnHere();
+	}
 
 	public void gotchaBitch(EntityLivingBase entity)
 	{

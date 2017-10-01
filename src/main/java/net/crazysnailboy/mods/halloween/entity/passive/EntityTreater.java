@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Random;
 import javax.annotation.Nullable;
+import net.crazysnailboy.mods.halloween.common.config.ModConfiguration;
 import net.crazysnailboy.mods.halloween.entity.ai.EntityAITreater;
 import net.crazysnailboy.mods.halloween.entity.monster.EntityHallowitch;
 import net.crazysnailboy.mods.halloween.init.ModItems;
@@ -107,7 +108,7 @@ public class EntityTreater extends EntityAnimal
 		if (!this.world.isRemote)
 		{
 			// make treaters despawn when it becomes daytime
-			if (this.world.isDaytime())
+			if (ModConfiguration.treatersDespawnDuringDaytime && this.world.isDaytime())
 			{
 				this.setDead();
 				this.spawnExplosionParticle();
@@ -244,10 +245,13 @@ public class EntityTreater extends EntityAnimal
 	@Override
 	public boolean getCanSpawnHere()
 	{
-		BlockPos pos = new BlockPos(this.posX, this.getEntityBoundingBox().minY, this.posZ);
-		if (this.world.getLight(pos) > 0 && BlockUtils.isSoftGround(this.world, pos.down()))
+		if (ModConfiguration.isHalloween && ModConfiguration.enableTreaters)
 		{
-			return EntityUtils.getCanMobSpawnHere(this);
+			BlockPos pos = new BlockPos(this.posX, this.getEntityBoundingBox().minY, this.posZ);
+			if (this.world.getLight(pos) > 0 && BlockUtils.isSoftGround(this.world, pos.down()))
+			{
+				return EntityUtils.getCanMobSpawnHere(this);
+			}
 		}
 		return false;
 	}
