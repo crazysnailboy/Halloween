@@ -2,6 +2,7 @@ package net.crazysnailboy.mods.halloween.entity.monster;
 
 import java.util.Iterator;
 import javax.annotation.Nullable;
+import net.crazysnailboy.mods.halloween.common.config.ModConfiguration;
 import net.crazysnailboy.mods.halloween.entity.ai.EntityAIJumpkin;
 import net.crazysnailboy.mods.halloween.init.ModLootTables;
 import net.crazysnailboy.mods.halloween.util.EntityUtils;
@@ -92,12 +93,13 @@ public class EntityJumpkin extends EntitySlime
 		if (!this.world.isRemote)
 		{
 			// if it's daytime, jumpkins have a chance to turn into pumpkins
-			if (this.world.isDaytime())
+			if (ModConfiguration.jumpkinsDespawnDuringDaytime && this.world.isDaytime())
 			{
 				float brightness = this.getBrightness(1.0F);
 				if (brightness > 0.5F && this.world.canBlockSeeSky(this.getPosition()) && ((this.rand.nextFloat() * 30F) < ((brightness - 0.4F) * 2.0F)))
 				{
-					if (this.onGround || this.isInWater())
+					// but only if the config says so, and mobGriefing is turned on, and they're on the ground or in water
+					if (ModConfiguration.jumpkinsTurnToPumpkins && this.world.getGameRules().getBoolean("mobGriefing") && (this.onGround || this.isInWater()))
 					{
 						IBlockState state = Blocks.PUMPKIN.getDefaultState().withProperty(BlockHorizontal.FACING, this.getHorizontalFacing());
 						this.world.setBlockState(this.getPosition(), state);
@@ -182,7 +184,11 @@ public class EntityJumpkin extends EntitySlime
 	@Override
 	public boolean getCanSpawnHere()
 	{
-		return this.world.getBlockState(this.getPosition().down()).getMaterial() == Material.GRASS && EntityUtils.getCanMobSpawnHere(this);
+		if (ModConfiguration.isHalloween && ModConfiguration.enableJumpkins)
+		{
+			return this.world.getBlockState(this.getPosition().down()).getMaterial() == Material.GRASS && EntityUtils.getCanMobSpawnHere(this);
+		}
+		return false;
 	}
 
 	/**

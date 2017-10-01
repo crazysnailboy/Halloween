@@ -1,8 +1,10 @@
 package net.crazysnailboy.mods.halloween.entity.monster;
 
 import javax.annotation.Nullable;
+import net.crazysnailboy.mods.halloween.common.config.ModConfiguration;
 import net.crazysnailboy.mods.halloween.entity.ai.EntityAICreeperween;
 import net.crazysnailboy.mods.halloween.init.ModItems;
+import net.crazysnailboy.mods.halloween.init.ModLootTables;
 import net.crazysnailboy.mods.halloween.item.ItemCandy.EnumCandyFlavour;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -56,7 +58,7 @@ public class EntityCreeperween extends EntityMob
 	{
 		super(worldIn);
 		this.setSize(0.9F, 2.7F);
-		this.setEntityInvulnerable(true);
+		this.setEntityInvulnerable(ModConfiguration.invulnerableCreeperweens);
 	}
 
 	@Override
@@ -192,7 +194,7 @@ public class EntityCreeperween extends EntityMob
 	@Override
 	protected ResourceLocation getLootTable()
 	{
-		return null;
+		return (ModConfiguration.invulnerableCreeperweens ? null : ModLootTables.ENTITIES_HALLOWMOB);
 	}
 
 	@Override
@@ -261,8 +263,6 @@ public class EntityCreeperween extends EntityMob
 					this.world.spawnEntity(entityitem);
 				}
 				// *** modified from InventoryHelper.spawnItemStack ***
-
-//				InventoryHelper.spawnItemStack(this.world, this.posX, this.posY, this.posZ, stack);
 			}
 		}
 	}
@@ -277,19 +277,10 @@ public class EntityCreeperween extends EntityMob
 		this.dataManager.set(IGNITED, Boolean.valueOf(true));
 	}
 
-
-//	@Override
-//	public boolean getCanSpawnHere()
-//	{
-//		if (super.getCanSpawnHere())
-//		{
-//			BlockPos pos = new BlockPos(this.posX, this.getEntityBoundingBox().minY, this.posZ);
-//			if (this.world.getLight(pos) > 0 && BlockUtils.isSoftGround(this.world, pos.down()))
-//			{
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
+	@Override
+	public boolean getCanSpawnHere()
+	{
+		return ModConfiguration.isHalloween && ModConfiguration.enableCreeperweens && super.getCanSpawnHere();
+	}
 
 }

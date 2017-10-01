@@ -46,7 +46,7 @@ public class ModDataSerializers
 	public static final DataSerializer<EnumTransparencyState> HAUNTER_TRANSPARENCY = new EnumDataSerializer<EnumTransparencyState>(EnumTransparencyState.class);
 
 
-	static
+	public static void registerDataSerializers()
 	{
 		DataSerializers.registerSerializer(HAUNTER_TRANSPARENCY);
 	}
