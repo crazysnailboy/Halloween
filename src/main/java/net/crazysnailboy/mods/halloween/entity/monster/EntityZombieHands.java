@@ -322,8 +322,14 @@ public class EntityZombieHands extends EntityZombie
 
 		if (!(state.getBlock() instanceof BlockAir))
 		{
-			SoundType soundType = state.getBlock().getSoundType(null, null, null, null);
-			this.playSound(soundType.getStepSound(), soundType.getVolume(), soundType.getPitch());
+			try
+			{
+				SoundType soundType = state.getBlock().getSoundType(state, this.world, pos, this);
+				this.playSound(soundType.getStepSound(), soundType.getVolume(), soundType.getPitch());
+			}
+			catch(Exception ex)
+			{
+			}
 
 			for (int q = 0; q < 48; q++)
 			{
